@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Multi-formulario</title>
+
+</head>
+<body>
+  <div class="container" id="screen1">
+    <h1>Formulario 1</h1>
+    <button id="toScreen2Btn">Ir a Formulario 2</button>
+  </div>
+
+  <div class="container hidden" id="screen2">
+    <h1>Formulario 2</h1>
+    <button id="btnNoAction">Botón sin acción</button>
+  </div>
+
+<script>
+  const toScreen2Btn = document.getElementById('toScreen2Btn');
+  const screen1 = document.getElementById('screen1');
+  const screen2 = document.getElementById('screen2');
+
+  toScreen2Btn.addEventListener('click', () => {
+    screen1.classList.add('hidden');
+    screen2.classList.remove('hidden');
+  });
+
+  // btnNoAction intentionally does nothing
+</script>
+</body>
+</html>
+
+
