@@ -1,9 +1,5 @@
-function mostrarFormulario2() {
-    document.getElementById('formulario1').style.display = 'none';
-    document.getElementById('formulario2').style.display = 'block';
-}
+const toScreen2Btn = document.getElementById('toScreen2Btn');
 
-function mostrarFormulario1() {
-    document.getElementById('formulario2').style.display = 'none';
-    document.getElementById('formulario1').style.display = 'block';
-}
+toScreen2Btn.addEventListener('click', () => {
+window.location.href = 'Formulario2.html'; // Redirige a Formulario2.html
+});
