@@ -8,8 +8,16 @@
 </head>
 <body>
   <div class="input-container">
-    <textarea placeholder="Escribe aquí..."></textarea>
+    <textarea id="miTextarea" placeholder="Escribe aquí..."></textarea>
+    <button onclick="reiniciarTextarea()">Restablecer</button>  
   </div>
+  <script>
+    function reiniciarTextarea() {
+      const textarea = document.getElementById("miTextarea");
+      textarea.value = "";        // Borra el texto
+      textarea.scrollTop = 0;     // Vuelve al inicio (por si había scroll)
+    }
+  </script>
 </body>
 </html>
 
