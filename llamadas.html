@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Formulario Llamadas</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(to bottom, #ffc0cb, #ffe6eb);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .call-container {
+      background-color: #d3d3d3;
+      border-radius: 10px;
+      padding: 40px;
+      text-align: center;
+      width: 300px;
+    }
+
+    .avatar {
+      font-size: 100px;
+      color: black;
+    }
+
+    .caller-id {
+      font-size: 20px;
+      margin: 10px 0 30px 0;
+    }
+
+    .attend-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #333;
+      color: white;
+      font-size: 22px;
+      padding: 15px 30px;
+      border-radius: 40px;
+      border: none;
+      cursor: pointer;
+      margin-bottom: 30px;
+    }
+
+    .attend-button i {
+      color: limegreen;
+      font-size: 24px;
+      margin-right: 10px;
+    }
+
+    .bottom-icons {
+      display: flex;
+      justify-content: space-around;
+    }
+
+    .icon-button {
+      background: white;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 28px;
+    }
+  </style>
+  <!-- Font Awesome para los íconos -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div class="call-container">
+    <div class="avatar"><i class="fas fa-user-circle"></i></div>
+    <div class="caller-id">No Caller ID</div>
+
+    <button class="attend-button">
+      <i class="fas fa-phone"></i> Atender
+    </button>
+
+    <div class="bottom-icons">
+      <div class="icon-button"><i class="fas fa-sync-alt"></i></div>
+      <div class="icon-button"><i class="fas fa-microphone"></i></div>
+    </div>
+  </div>
+  <script>
+    // Función para hablar
+    function hablar(texto) {
+      const voz = new SpeechSynthesisUtterance(texto);
+      voz.lang = 'es-ES'; // Español
+      voz.pitch = 1;
+      voz.rate = 1;
+      speechSynthesis.speak(voz);
+    }
+  
+    // Detectar clic en el botón "Atender"
+    document.addEventListener("DOMContentLoaded", function () {
+      const botonAtender = document.querySelector('.attend-button');
+  
+      botonAtender.addEventListener('click', function () {
+        hablar("Hola, esta es una llamada simulada. ¿En qué puedo ayudarte?");
+      });
+    });
+  </script>
+  
+</body>
+</html>
