@@ -1,4 +1,6 @@
 import ollama
+from llamada_real import hacer_llamada
+
 
 # Elegí el modelo: puede ser 'mistral', 'llama2', etc.
 modelo = "mistral"
