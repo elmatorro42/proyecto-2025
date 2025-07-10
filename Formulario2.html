@@ -5,9 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Entrenador Anti-Estafas</title>
 
-  <!-- Cargamos Transformers.js -->
-  <script src="https://cdn.jsdelivr.net/npm/@xenova/transformers@2.5.0/dist/transformers.min.js"></script>
-
   <style>
     body {
       margin: 0;
@@ -116,15 +113,24 @@
     <button onclick="enviarMensaje()"></button>
   </div>
 
-  <script>
+  <script type="module">
+    import { pipeline } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.5.0';
+
     let generador;
     let historial = "Actuá como un estafador que intenta engañar al usuario. Sé convincente pero no grosero.\nUsuario: Hola\nIA:";
 
     const chat = document.getElementById("chat");
 
+    function agregarMensaje(texto, clase) {
+      const div = document.createElement("div");
+      div.className = "mensaje " + clase;
+      div.innerText = texto;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
     async function cargarModelo() {
       agregarMensaje("Cargando modelo IA estafadora...", "ia");
-      const { pipeline } = await window.transformers.load();
       generador = await pipeline("text-generation", "Xenova/distilgpt2");
       agregarMensaje("Modelo cargado. Iniciá el entrenamiento.", "ia");
       await primeraEstafa();
@@ -144,22 +150,13 @@
       historial += respuesta + "\nUsuario: ";
     }
 
-    function agregarMensaje(texto, clase) {
-      const div = document.createElement("div");
-      div.className = "mensaje " + clase;
-      div.innerText = texto;
-      chat.appendChild(div);
-      chat.scrollTop = chat.scrollHeight;
-    }
-
-    async function enviarMensaje() {
+    window.enviarMensaje = async function () {
       const textarea = document.getElementById("miTextarea");
       const mensaje = textarea.value.trim();
       if (!mensaje || !generador) return;
 
       agregarMensaje(mensaje, "usuario");
       historial += mensaje + "\nIA:";
-
       textarea.value = "";
 
       const salida = await generador(historial, {
@@ -173,7 +170,7 @@
       const respuesta = salida[0].generated_text.replace(historial, "").trim();
       agregarMensaje(respuesta, "ia");
       historial += respuesta + "\nUsuario: ";
-    }
+    };
 
     cargarModelo();
   </script>
