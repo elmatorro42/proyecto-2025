@@ -3,19 +3,50 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Formulario con Correcciones</title>
+  <title>Entrenador Anti-Estafas</title>
+
+  <!-- Cargamos Transformers.js -->
+  <script src="https://cdn.jsdelivr.net/npm/@xenova/transformers@2.5.0/dist/transformers.min.js"></script>
 
   <style>
-    /* Estilo general del body */
     body {
       margin: 0;
       padding: 0;
       background: linear-gradient(to bottom, #ffc0cb, #ffe6eb);
       font-family: 'Courier New', monospace;
+      display: flex;
+      flex-direction: column;
       height: 100vh;
     }
 
-    /* Contenedor inferior fijo */
+    #chat {
+      flex-grow: 1;
+      padding: 20px;
+      overflow-y: auto;
+      background: #fff0f5;
+    }
+
+    .mensaje {
+      margin-bottom: 15px;
+      max-width: 70%;
+      padding: 10px;
+      border-radius: 8px;
+    }
+
+    .usuario {
+      background-color: black;
+      color: white;
+      align-self: flex-end;
+      margin-left: auto;
+    }
+
+    .ia {
+      background-color: #fddde6;
+      color: black;
+      align-self: flex-start;
+      margin-right: auto;
+    }
+
     .input-container {
       display: flex;
       align-items: center;
@@ -23,13 +54,8 @@
       background-color: #fff0f5;
       padding: 10px;
       border-top: 2px solid #fff;
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      gap: 10px;
     }
 
-    /* Botón Correcciones (izquierda) */
     .correcciones-btn {
       background-color: #fddde6;
       padding: 14px 20px;
@@ -41,7 +67,6 @@
       cursor: pointer;
     }
 
-    /* Área de texto */
     #miTextarea {
       flex-grow: 1;
       height: 60px;
@@ -51,10 +76,9 @@
       font-size: 16px;
       padding: 15px;
       resize: none;
-      margin: 0;
+      margin: 0 10px;
     }
 
-    /* Botón de envío (flecha) */
     button {
       background: none;
       border: none;
@@ -69,24 +93,89 @@
       background-color: black;
       padding: 12px 18px;
     }
+
+    h2 {
+      text-align: center;
+      background-color: #fddde6;
+      margin: 0;
+      padding: 15px;
+      font-size: 22px;
+    }
   </style>
 </head>
 
 <body>
 
-  <!-- Contenedor inferior -->
-  <div class="input-container" id="pantallaPrincipal">
+  <h2>🛡️ Entrenador Anti-Estafas Virtuales</h2>
+
+  <div id="chat"></div>
+
+  <div class="input-container">
     <a class="correcciones-btn" href="correcciones.html">Correcciones</a>
-    <textarea id="miTextarea" placeholder="Escribir aquí:"></textarea>
-    <button onclick="reiniciarTextarea()"></button>
+    <textarea id="miTextarea" placeholder="Escribí tu respuesta..."></textarea>
+    <button onclick="enviarMensaje()"></button>
   </div>
 
   <script>
-    function reiniciarTextarea() {
-      const textarea = document.getElementById("miTextarea");
-      textarea.value = "";
-      textarea.scrollTop = 0;
+    let generador;
+    let historial = "Actuá como un estafador que intenta engañar al usuario. Sé convincente pero no grosero.\nUsuario: Hola\nIA:";
+
+    const chat = document.getElementById("chat");
+
+    async function cargarModelo() {
+      agregarMensaje("Cargando modelo IA estafadora...", "ia");
+      const { pipeline } = await window.transformers.load();
+      generador = await pipeline("text-generation", "Xenova/distilgpt2");
+      agregarMensaje("Modelo cargado. Iniciá el entrenamiento.", "ia");
+      await primeraEstafa();
     }
+
+    async function primeraEstafa() {
+      const salida = await generador(historial, {
+        max_new_tokens: 50,
+        temperature: 0.8,
+        top_k: 50,
+        top_p: 0.95,
+        repetition_penalty: 1.1,
+      });
+
+      const respuesta = salida[0].generated_text.replace(historial, "").trim();
+      agregarMensaje(respuesta, "ia");
+      historial += respuesta + "\nUsuario: ";
+    }
+
+    function agregarMensaje(texto, clase) {
+      const div = document.createElement("div");
+      div.className = "mensaje " + clase;
+      div.innerText = texto;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    async function enviarMensaje() {
+      const textarea = document.getElementById("miTextarea");
+      const mensaje = textarea.value.trim();
+      if (!mensaje || !generador) return;
+
+      agregarMensaje(mensaje, "usuario");
+      historial += mensaje + "\nIA:";
+
+      textarea.value = "";
+
+      const salida = await generador(historial, {
+        max_new_tokens: 50,
+        temperature: 0.8,
+        top_k: 50,
+        top_p: 0.95,
+        repetition_penalty: 1.1,
+      });
+
+      const respuesta = salida[0].generated_text.replace(historial, "").trim();
+      agregarMensaje(respuesta, "ia");
+      historial += respuesta + "\nUsuario: ";
+    }
+
+    cargarModelo();
   </script>
 
 </body>
