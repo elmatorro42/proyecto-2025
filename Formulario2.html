@@ -1,24 +1,93 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Pantalla Blanca con Input</title>
-<link rel="stylesheet" href="Formulario2.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Formulario con Correcciones</title>
+
+  <style>
+    /* Estilo general del body */
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #ffc0cb, #ffe6eb);
+      font-family: 'Courier New', monospace;
+      height: 100vh;
+    }
+
+    /* Contenedor inferior fijo */
+    .input-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #fff0f5;
+      padding: 10px;
+      border-top: 2px solid #fff;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      gap: 10px;
+    }
+
+    /* Botón Correcciones (izquierda) */
+    .correcciones-btn {
+      background-color: #fddde6;
+      padding: 14px 20px;
+      font-size: 18px;
+      font-weight: bold;
+      color: black;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* Área de texto */
+    #miTextarea {
+      flex-grow: 1;
+      height: 60px;
+      background-color: black;
+      color: white;
+      border: none;
+      font-size: 16px;
+      padding: 15px;
+      resize: none;
+      margin: 0;
+    }
+
+    /* Botón de envío (flecha) */
+    button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      margin-left: 5px;
+    }
+
+    button::after {
+      content: "➤";
+      font-size: 32px;
+      color: white;
+      background-color: black;
+      padding: 12px 18px;
+    }
+  </style>
 </head>
 
 <body>
-  <div class="input-container">
+
+  <!-- Contenedor inferior -->
+  <div class="input-container" id="pantallaPrincipal">
+    <a class="correcciones-btn" href="correcciones.html">Correcciones</a>
     <textarea id="miTextarea" placeholder="Escribir aquí:"></textarea>
     <button onclick="reiniciarTextarea()"></button>
   </div>
+
   <script>
     function reiniciarTextarea() {
       const textarea = document.getElementById("miTextarea");
-      textarea.value = "";        // Borra el texto
-      textarea.scrollTop = 0;     // Vuelve al inicio (por si había scroll)
+      textarea.value = "";
+      textarea.scrollTop = 0;
     }
   </script>
+
 </body>
 </html>
-

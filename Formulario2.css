@@ -1,15 +1,13 @@
+/* Estilo general del body */
 body {
   margin: 0;
   padding: 0;
   background: linear-gradient(to bottom, #ffc0cb, #ffe6eb);
   font-family: 'Courier New', monospace;
-  display: flex;
-  flex-direction: column;
   height: 100vh;
-  justify-content: flex-end;
 }
 
-/* Contenedor inferior */
+/* Contenedor inferior fijo */
 .input-container {
   display: flex;
   align-items: center;
@@ -17,21 +15,25 @@ body {
   background-color: #fff0f5;
   padding: 10px;
   border-top: 2px solid #fff;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  gap: 10px;
 }
 
-/* Botón de correcciones */
-.input-container::before {
-  content: "Correcciones";
+/* Botón Correcciones (izquierda) */
+.correcciones-btn {
   background-color: #fddde6;
   padding: 14px 20px;
   font-size: 18px;
   font-weight: bold;
-  color: #000;
-  border-radius: 0;
-  margin-right: 10px;
+  color: black;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
 }
 
-/* Área de escribir */
+/* Área de texto */
 #miTextarea {
   flex-grow: 1;
   height: 60px;
@@ -41,11 +43,10 @@ body {
   font-size: 16px;
   padding: 15px;
   resize: none;
-  border-radius: 0;
-  margin: 0 5px;
+  margin: 0;
 }
 
-/* Flecha de envío como botón */
+/* Botón de envío (flecha) */
 button {
   background: none;
   border: none;
@@ -59,5 +60,4 @@ button::after {
   color: white;
   background-color: black;
   padding: 12px 18px;
-  border-radius: 0;
 }

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Correcciones</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #ffc0cb, #ffe6eb);
+      font-family: 'Courier New', monospace;
+      height: 100vh;
+    }
+
+    h2 {
+      text-align: center;
+      padding-top: 20px;
+    }
+
+    .columnas {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 30px;
+      padding: 0 30px;
+    }
+
+    .columna {
+      background-color: white;
+      width: 30%;
+      padding: 10px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+      text-align: left;
+    }
+
+    .columna h3 {
+      text-align: center;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    .columna .contenido {
+      height: 300px;
+      overflow-y: auto;
+      background-color: #f9f9f9;
+      padding: 10px;
+      font-size: 14px;
+      white-space: pre-wrap;
+      border: 1px solid #ccc;
+    }
+
+    .reintentar-btn {
+      display: block;
+      margin: 30px auto;
+      font-size: 18px;
+      background-color: white;
+      border: 1px solid black;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Correcciones</h2>
+  <div class="columnas">
+    <div class="columna">
+      <h3>Mensaje del estafador</h3>
+      <div class="contenido"></div>
+    </div>
+    <div class="columna">
+      <h3>Tu respuesta</h3>
+      <div class="contenido"></div>
+    </div>
+    <div class="columna">
+      <h3>¿Qué salió mal?</h3>
+      <div class="contenido"></div>
+    </div>
+  </div>
+
+  <button class="reintentar-btn" onclick="window.location.href='formulario2.html'">Reintentar</button>
+
+</body>
+</html>
