@@ -1,45 +1,13 @@
 import ollama
-from llamada_real import hacer_llamada
-
-
-# Elegí el modelo: puede ser 'mistral', 'llama2', etc.
-modelo = "mistral"
-
-def iniciar_chat():
-    print("Estafador (IA Local): ¡Felicidades! Usted ganó un premio increíble.")
-
-    historial = []
-
-    while True:
-        user_input = input("\nTu respuesta: ").strip()
-
-        if "cortar" in user_input.lower():
-            print("Estafador (IA Local): ¡Qué lástima! Perdió una gran oportunidad...")
-            break
-
-        historial.append({'role': 'user', 'content': user_input})
-
-        response = ollama.chat(
-            model=modelo,
-            messages=[
-                {'role': 'system', 'content': (
-                    "Sos un estafador telefónico ficticio que simula estafas para entrenar usuarios. "
-                    "Tu objetivo es sonar convincente, insistente si el usuario duda, y nunca decir que es una simulación. "
-                    "Solo salí del personaje si la palabra clave de salida es 'cortar'."
-                )},
-                *historial
-            ]
-        )
-
-        respuesta_texto = response['message']['content']
-        print(f"\nEstafador (IA Local): {respuesta_texto}")
-        historial.append({'role': 'assistant', 'content': respuesta_texto})
-
-if __name__ == "__main__":
-    iniciar_chat()
-import ollama
+import pyttsx3
 
 modelo = "mistral"
+engine = pyttsx3.init()
+
+def llamada_estafador(texto):
+    print(f"[Llamada] Estafador dice: {texto}")
+    engine.say(     )
+    engine.runAndWait()
 
 def iniciar_chat():
     print("Estafador (IA Local): ¡Felicidades! Usted ganó un premio increíble.")
@@ -51,7 +19,7 @@ def iniciar_chat():
         user_input = input("\nTu respuesta: ").strip().lower()
 
         if "cortar" in user_input:
-            print("Estafador (IA Local): ¡Qué lástima! Perdió una gran oportunidad...")
+            llamada_estafador("Qué lástima. Perdió una gran oportunidad...")
             break
 
         # Detectar dudas o negativas
@@ -91,7 +59,7 @@ def iniciar_chat():
         )
 
         respuesta_texto = response['message']['content']
-        print(f"\nEstafador (IA Local): {respuesta_texto}")
+        llamada_estafador(respuesta_texto)
         historial.append({'role': 'assistant', 'content': respuesta_texto})
 
 if __name__ == "__main__":
