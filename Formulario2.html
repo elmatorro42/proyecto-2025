@@ -103,7 +103,7 @@
 
 <body>
 
-  <h2>🛡️ Entrenador Anti-Estafas Virtuales</h2>
+  <h2></h2>
 
   <div id="chat"></div>
 
@@ -130,9 +130,9 @@
     }
 
     async function cargarModelo() {
-      agregarMensaje("Cargando modelo IA estafadora...", "ia");
+      
       generador = await pipeline("text-generation", "Xenova/distilgpt2");
-      agregarMensaje("Modelo cargado. Iniciá el entrenamiento.", "ia");
+      
       await primeraEstafa();
     }
 
@@ -177,3 +177,4 @@
 
 </body>
 </html>
+<iframe src="formulario2.html"></iframe>
