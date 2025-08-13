@@ -1,21 +1,106 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Multi-formulario</title>
-  <link rel="stylesheet" href="index.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulaciones</title>
+<style>
+body {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  background-color: #d6f0fa; /* Fondo celeste claro */
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.container {
+  text-align: center;
+  max-width: 500px;
+  padding: 20px;
+}
+
+.titulo {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.descripcion {
+  font-size: 12px;
+  margin-bottom: 30px;
+}
+
+.opcion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 30px;
+  border-radius: 12px;
+  font-size: 16px;
+  color: white;
+  cursor: pointer;
+  border: none;
+  width: 180px;
+  margin: 10px auto;
+  transition: opacity 0.3s ease;
+}
+
+.opcion:hover {
+  opacity: 0.9;
+}
+
+.opcion.chats {
+  background-color: #1e73be; /* Azul */
+}
+
+.opcion.llamadas {
+  background-color: #e68080; /* Rojo suave */
+}
+
+.icono {
+  font-size: 18px;
+}
+
+.texto-inferior {
+  font-size: 12px;
+  margin-top: 20px;
+}
+
+.flecha {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  font-size: 40px;
+  cursor: pointer;
+}
+</style>
 </head>
 <body>
-  <div class="container">
-    <h2 class="titulo">Seleccione una opción</h2>
-    <div class="opciones">
-      <div class="opcion" onclick="location.href='formulario2.html'">Chats</div>
-      <div class="opcion" onclick="location.href='llamadas.html'">Llamadas</div>
-    </div>
+
+<div class="container">
+  <div class="titulo">Simulaciones</div>
+  <div class="descripcion">
+    La IA te enviará mensajes o te hablará simulando estafas para que las identifiques.
   </div>
+
+  <a href="Formulario2.html" class="opcion chats">
+    <span class="icono">💬</span> Chats
+  </a>  
+
+  <button class="opcion llamadas">
+    <span class="icono">📞</span> Llamadas
+  </button>
+
+  <div class="texto-inferior">
+    Elige una de las opciones en pantalla para comenzar
+  </div>
+</div>
+
+<div class="flecha">⬅</div>
+
 </body>
 </html>
-<!-- Si ambos están en la raíz -->
-
-
