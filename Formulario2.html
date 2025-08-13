@@ -1,180 +1,239 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Entrenador Anti-Estafas</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chats</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #d6f0fa; /* Fondo celeste */
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
 
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(to bottom, #ffc0cb, #ffe6eb);
-      font-family: 'Courier New', monospace;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-    }
+  .chat-container {
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    width: 90%;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    height: 90%;
+    position: relative;
+  }
 
-    #chat {
-      flex-grow: 1;
-      padding: 20px;
-      overflow-y: auto;
-      background: #fff0f5;
-    }
+  /* Encabezado */
+  .header {
+    background-color: white;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    font-weight: bold;
+    font-size: 14px;
+    border-bottom: 2px solid #ccc;
+  }
+  .header img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
 
-    .mensaje {
-      margin-bottom: 15px;
-      max-width: 70%;
-      padding: 10px;
-      border-radius: 8px;
-    }
+  /* Info azul */
+  .info-box {
+    background-color: #1e73be;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+  }
+  .info-card {
+    background-color: white;
+    padding: 20px;
+    text-align: center;
+  }
+  .info-card img {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 10px;
+  }
+  .info-card button {
+    background-color: black;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    margin: 5px;
+    cursor: pointer;
+  }
 
-    .usuario {
-      background-color: black;
-      color: white;
-      align-self: flex-end;
-      margin-left: auto;
-    }
+  /* Mensajes */
+  #chat {
+    flex-grow: 1;
+    padding: 15px;
+    overflow-y: auto;
+  }
+  .mensaje {
+    max-width: 70%;
+    padding: 8px 12px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+  .usuario {
+    background-color: black;
+    color: white;
+    margin-left: auto;
+  }
+  .ia {
+    background-color: #f1f1f1;
+    color: black;
+    margin-right: auto;
+  }
 
-    .ia {
-      background-color: #fddde6;
-      color: black;
-      align-self: flex-start;
-      margin-right: auto;
-    }
+  /* Área de escritura */
+  .input-container {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    gap: 5px;
+  }
+  .btn-correcciones {
+    background-color: #f08080;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  .textarea {
+    flex-grow: 1;
+    background-color: black;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 10px;
+  }
+  .btn-enviar {
+    background-color: black;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 18px;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  .btn-comenzar {
+    background-color: #8fda8f;
+    color: black;
+    border: none;
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+  }
 
-    .input-container {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background-color: #fff0f5;
-      padding: 10px;
-      border-top: 2px solid #fff;
-    }
-
-    .correcciones-btn {
-      background-color: #fddde6;
-      padding: 14px 20px;
-      font-size: 18px;
-      font-weight: bold;
-      color: black;
-      text-decoration: none;
-      border: none;
-      cursor: pointer;
-    }
-
-    #miTextarea {
-      flex-grow: 1;
-      height: 60px;
-      background-color: black;
-      color: white;
-      border: none;
-      font-size: 16px;
-      padding: 15px;
-      resize: none;
-      margin: 0 10px;
-    }
-
-    button {
-      background: none;
-      border: none;
-      cursor: pointer;
-      margin-left: 5px;
-    }
-
-    button::after {
-      content: "➤";
-      font-size: 32px;
-      color: white;
-      background-color: black;
-      padding: 12px 18px;
-    }
-
-    h2 {
-      text-align: center;
-      background-color: #fddde6;
-      margin: 0;
-      padding: 15px;
-      font-size: 22px;
-    }
-  </style>
+  /* Flecha */
+  .flecha {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    font-size: 30px;
+    cursor: pointer;
+  }
+</style>
 </head>
-
 <body>
 
-  <h2></h2>
+<div class="chat-container">
+  <div class="header">
+    <img src="https://via.placeholder.com/30" alt="icono">
+    Número Desconocido
+  </div>
+
+  <div class="info-box">
+    <div class="info-card">
+      <img src="https://via.placeholder.com/60" alt="usuario">
+      <p>+54 011 5721-5574</p>
+      <p>No es un contacto. Tienes grupos en común.</p>
+      <div>
+        <button>Bloquear</button>
+        <button>Agregar</button>
+      </div>
+    </div>
+  </div>
 
   <div id="chat"></div>
 
   <div class="input-container">
-    <a class="correcciones-btn" href="correcciones.html">Correcciones</a>
-    <textarea id="miTextarea" placeholder="Escribí tu respuesta..."></textarea>
-    <button onclick="enviarMensaje()"></button>
+    <button class="btn-correcciones">Correcciones</button>
+    <textarea id="miTextarea" class="textarea" placeholder="Escribir aquí..."></textarea>
+    <button class="btn-enviar" onclick="enviarMensaje()">➤</button>
+    <button class="btn-comenzar">Comenzar</button>
   </div>
 
-  <script type="module">
-    import { pipeline } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.5.0';
+  <div class="flecha">⬅</div>
+</div>
 
-    let generador;
-    let historial = "Actuá como un estafador que intenta engañar al usuario. Sé convincente pero no grosero.\nUsuario: Hola\nIA:";
+<script type="module">
+  import { pipeline } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.5.0';
 
-    const chat = document.getElementById("chat");
+  let generador;
+  let historial = "Actuá como un estafador que intenta engañar al usuario. Sé convincente pero no grosero.\nUsuario: Hola\nIA:";
 
-    function agregarMensaje(texto, clase) {
-      const div = document.createElement("div");
-      div.className = "mensaje " + clase;
-      div.innerText = texto;
-      chat.appendChild(div);
-      chat.scrollTop = chat.scrollHeight;
-    }
+  const chat = document.getElementById("chat");
 
-    async function cargarModelo() {
-      
-      generador = await pipeline("text-generation", "Xenova/distilgpt2");
-      
-      await primeraEstafa();
-    }
+  function agregarMensaje(texto, clase) {
+    const div = document.createElement("div");
+    div.className = "mensaje " + clase;
+    div.innerText = texto;
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+  }
 
-    async function primeraEstafa() {
-      const salida = await generador(historial, {
-        max_new_tokens: 50,
-        temperature: 0.8,
-        top_k: 50,
-        top_p: 0.95,
-        repetition_penalty: 1.1,
-      });
+  async function cargarModelo() {
+    generador = await pipeline("text-generation", "Xenova/distilgpt2");
+    await primeraEstafa();
+  }
 
-      const respuesta = salida[0].generated_text.replace(historial, "").trim();
-      agregarMensaje(respuesta, "ia");
-      historial += respuesta + "\nUsuario: ";
-    }
+  async function primeraEstafa() {
+    const salida = await generador(historial, {
+      max_new_tokens: 50,
+      temperature: 0.8,
+      top_k: 50,
+      top_p: 0.95,
+      repetition_penalty: 1.1,
+    });
+    const respuesta = salida[0].generated_text.replace(historial, "").trim();
+    agregarMensaje(respuesta, "ia");
+    historial += respuesta + "\nUsuario: ";
+  }
 
-    window.enviarMensaje = async function () {
-      const textarea = document.getElementById("miTextarea");
-      const mensaje = textarea.value.trim();
-      if (!mensaje || !generador) return;
+  window.enviarMensaje = async function () {
+    const textarea = document.getElementById("miTextarea");
+    const mensaje = textarea.value.trim();
+    if (!mensaje || !generador) return;
+    agregarMensaje(mensaje, "usuario");
+    historial += mensaje + "\nIA:";
 
-      agregarMensaje(mensaje, "usuario");
-      historial += mensaje + "\nIA:";
-      textarea.value = "";
+    textarea.value = "";
 
-      const salida = await generador(historial, {
-        max_new_tokens: 50,
-        temperature: 0.8,
-        top_k: 50,
-        top_p: 0.95,
-        repetition_penalty: 1.1,
-      });
+    const salida = await generador(historial, {
+      max_new_tokens: 50,
+      temperature: 0.8,
+      top_k: 50,
+      top_p: 0.95,
+      repetition_penalty: 1.1,
+    });
+    const respuesta = salida[0].generated_text.replace(historial, "").trim();
+    agregarMensaje(respuesta, "ia");
+    historial += respuesta + "\nUsuario: ";
+  };
 
-      const respuesta = salida[0].generated_text.replace(historial, "").trim();
-      agregarMensaje(respuesta, "ia");
-      historial += respuesta + "\nUsuario: ";
-    };
-
-    cargarModelo();
-  </script>
+  cargarModelo();
+</script>
 
 </body>
 </html>
-<iframe src="formulario2.html"></iframe>
