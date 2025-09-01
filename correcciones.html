@@ -8,101 +8,107 @@
     body {
       margin: 0;
       padding: 0;
-      background-color: #2c2c2c; /* Fondo gris oscuro */
-      font-family: Arial, sans-serif; /* Fuente moderna */
-      height: 100vh;
-      color: #e0e0e0; /* Texto gris claro */
+      background-color: #e6f7ff; /* Fondo celeste claro */
+      font-family: 'Courier New', monospace;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
 
-    h2 {
+    /* Encabezado azul */
+    .encabezado {
+      background-color: #1e5f91;
+      color: white;
       text-align: center;
-      padding-top: 40px;
-      margin-bottom: 20px;
-      color: #ffffff;
-      font-size: 28px;
-    }
-
-    .columnas {
-      display: flex;
-      justify-content: center;
-      gap: 30px;
-      margin-top: 30px;
-      padding: 0 30px;
-      width: 100%;
-      max-width: 1200px; /* Ancho máximo para la sección de columnas */
-    }
-
-    .columna {
-      background-color: #3a3a3a; /* Fondo de la columna un poco más claro */
-      flex: 1; /* Para que ocupen el mismo espacio */
       padding: 20px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-      border-radius: 10px; /* Bordes redondeados */
+      margin-top: 30px;
+      border-radius: 10px;
+      width: 80%;
+    }
+
+    .encabezado h2 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .encabezado p {
+      margin: 8px 0 0 0;
+      font-size: 14px;
+    }
+
+    /* Tarjeta central */
+    .tarjeta {
+      background-color: white;
+      margin-top: 20px;
+      padding: 20px;
+      border-radius: 10px;
+      width: 60%;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .etiqueta-roja, .etiqueta-verde {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 5px;
+      font-weight: bold;
+      color: white;
+      margin-bottom: 8px;
+    }
+
+    .etiqueta-roja {
+      background-color: #f08080;
+    }
+
+    .etiqueta-verde {
+      background-color: #90ee90;
+      color: black;
+    }
+
+    .caja {
+      background-color: #d9d9d9;
+      padding: 10px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+      font-size: 14px;
       text-align: left;
     }
 
-    .columna h3 {
-      text-align: center;
-      font-size: 18px;
-      margin-bottom: 15px;
-      color: #00ff99; /* Color verde neón para los títulos */
-      border-bottom: 2px solid #00ff99;
-      padding-bottom: 10px;
-    }
-
-    .columna .contenido {
-      height: 300px;
-      overflow-y: auto;
-      background-color: #242424; /* Fondo del contenido más oscuro */
-      padding: 15px;
-      font-size: 14px;
-      color: #b0b0b0; /* Texto del contenido */
-      white-space: pre-wrap;
-      border: 1px solid #444;
-      border-radius: 5px;
-    }
-    
-    .reintentar-btn {
-      display: block;
-      margin: 50px auto;
-      font-size: 18px;
-      background-color: #00ff99; /* Fondo del botón verde neón */
-      color: #2c2c2c; /* Texto del botón oscuro */
+    /* Botón continuar */
+    .continuar-btn {
+      background-color: #1e5f91;
+      color: white;
+      padding: 10px 20px;
+      font-size: 16px;
       border: none;
-      padding: 12px 24px;
+      border-radius: 6px;
       cursor: pointer;
-      border-radius: 5px;
-      font-weight: bold;
-      transition: background-color 0.3s ease;
+      margin-top: 10px;
     }
 
-    .reintentar-btn:hover {
-      background-color: #00e68a; /* Un tono un poco más oscuro al pasar el mouse */
+    .continuar-btn:hover {
+      background-color: #15486c;
     }
   </style>
 </head>
 <body>
 
-  <h2>Correcciones</h2>
-  <div class="columnas">
-    <div class="columna">
-      <h3>Mensaje del estafador</h3>
-      <div class="contenido"></div>
-    </div>
-    <div class="columna">
-      <h3>Tu respuesta</h3>
-      <div class="contenido"></div>
-    </div>
-    <div class="columna">
-      <h3>¿Qué salió mal?</h3>
-      <div class="contenido"></div>
-    </div>
+  <div class="encabezado">
+    <h2>correccion de tu respuesta</h2>
+    <p>Revisá qué podrías mejorar para evitar caer en estafas</p>
   </div>
 
-  <button class="reintentar-btn" onclick="window.location.href='formulario2.html'">Reintentar</button>
+  <div class="tarjeta">
+    <div class="etiqueta-roja">Tu respuesta:</div>
+    <div class="caja">""</div>
+
+    <div class="etiqueta-verde">Sugerencia:</div>
+    <div class="caja">""</div>
+
+    <button class="continuar-btn" onclick="window.location.href='formulario2.html'">
+      Continuar
+    </button>
+  </div>
 
 </body>
 </html>

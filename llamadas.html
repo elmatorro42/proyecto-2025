@@ -13,6 +13,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      position: relative;
     }
 
     .call-container {
@@ -69,6 +70,15 @@
       cursor: pointer;
       font-size: 28px;
     }
+
+    /* Flecha volver */
+    .flecha {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      font-size: 40px;
+      cursor: pointer;
+    }
   </style>
   <!-- Font Awesome para los íconos -->
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
@@ -87,25 +97,9 @@
       <div class="icon-button"><i class="fas fa-microphone"></i></div>
     </div>
   </div>
-  <script>
-    // Función para hablar
-    function hablar(texto) {
-      const voz = new SpeechSynthesisUtterance(texto);
-      voz.lang = 'es-ES'; // Español
-      voz.pitch = 1;
-      voz.rate = 1;
-      speechSynthesis.speak(voz);
-    }
-  
-    // Detectar clic en el botón "Atender"
-    document.addEventListener("DOMContentLoaded", function () {
-      const botonAtender = document.querySelector('.attend-button');
-  
-      botonAtender.addEventListener('click', function () {
-        hablar("hola");
-      });
-    });
-  </script>
-  
+
+  <!-- Flecha para volver a la pantalla anterior -->
+  <a href="index.html" class="flecha">⬅</a>
+
 </body>
 </html>
