@@ -3,111 +3,113 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Información - Fraud Fighter</title>
+  <title>Información</title>
   <style>
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background-color: #d6f0fa; /* fondo celeste */
+      background-color: #d6f0fa;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
-      flex-direction: column;
-      padding: 40px;
-      position: relative;
-    }
-
-    .container {
-      display: flex;
-      flex-direction: column;
+      justify-content: center;
+      min-height: 100vh;
       gap: 20px;
-      width: 100%;
-      max-width: 600px;
     }
 
     .card {
-      background-color: #1f6aa5;
-      color: white;
-      padding: 20px;
-      border-radius: 10px;
       display: flex;
       align-items: center;
+      background-color: #1f6aa5;
+      color: white;
+      border-radius: 10px;
+      padding: 20px;
+      width: 80%;
+      max-width: 500px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
       gap: 15px;
-      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
     }
 
-    .card img.icon {
+    .icon {
       width: 50px;
       height: 50px;
-      object-fit: contain;
     }
 
-    .card h2 {
-      margin: 0 0 5px;
-      font-size: 18px;
+    h2 {
+      margin: 0 0 8px 0;
+      font-size: 1.3rem;
     }
 
-    .card p {
+    p {
       margin: 0;
-      font-size: 14px;
     }
 
-    .back-btn {
+    .btn-link {
+      display: inline-block;
+      margin-top: 8px;
+      background-color: white;
+      color: #1f6aa5;
+      padding: 6px 12px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    .btn-link:hover {
+      background-color: #f0f0f0;
+    }
+
+    /* Flecha volver */
+    .flecha {
       position: fixed;
       bottom: 20px;
       right: 20px;
       font-size: 40px;
-      text-decoration: none;
+      cursor: pointer;
       color: black;
-    }
-
-    .back-btn:hover {
-      color: #333;
+      text-decoration: none;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-
-    <!-- Tarjeta 1 -->
-    <div class="card">
-      <img src="799-7998385_brain-cerebro-animado-psicologia-neuropsicologia-neuro-brain-flat 1.png" alt="IA" class="icon">
-      <div>
-        <h2>Inteligencia artificial</h2>
-        <p>Una IA que simula chats y llamadas para aprender a detectar sobre estafas virtuales.</p>
-      </div>
+  <!-- Tarjeta 1 -->
+  <div class="card">
+    <img src="799-7998385_brain-cerebro-animado-psicologia-neuropsicologia-neuro-brain-flat 1.png" alt="IA" class="icon">
+    <div>
+      <h2>Inteligencia artificial</h2>
+      <p>Una IA que simula chats y llamadas para aprender a detectar sobre estafas virtuales.</p>
     </div>
-
-    <!-- Tarjeta 2 -->
-    <div class="card">
-      <img src="the-balloon-text-cartoon-style-png 1.png" alt="Chat" class="icon">
-      <div>
-        <h2>Simulación de chats</h2>
-        <p>La IA te enviará mensajes simulando estafas para que las identifiques.</p>
-      </div>
-    </div>
-
-    <!-- Tarjeta 3 -->
-    <div class="card">
-      <img src="291-2919093_complaint-icon-telefono-animado-sin-fondo 1.png" alt="Llamada" class="icon">
-      <div>
-        <h2>Simulación de llamada</h2>
-        <p>Interactuá con la IA mientras finge llamadas fraudulentas.</p>
-      </div>
-    </div>
-
-    <!-- Tarjeta 4 -->
-    <div class="card">
-      <img src="warning-icons-in-yellow-triangle-free-png 2.png" alt="Estafas" class="icon">
-      <div>
-        <h2>Información de estafas comunes</h2>
-        <p>Tocá acá para leer sobre algunas estafas comunes.</p>
-      </div>
-    </div>
-
   </div>
 
-  <!-- Botón volver -->
-  <a href="inicio.html" class="back-btn">⟵</a>
+  <!-- Tarjeta 2 -->
+  <div class="card">
+    <img src="the-balloon-text-cartoon-style-png 1.png" alt="Chats" class="icon">
+    <div>
+      <h2>Simulación de chats</h2>
+      <p>La IA te enviará mensajes simulando estafas para que las identifiques.</p>
+    </div>
+  </div>
+
+  <!-- Tarjeta 3 -->
+  <div class="card">
+    <img src="291-2919093_complaint-icon-telefono-animado-sin-fondo 1.png" alt="Llamada" class="icon">
+    <div>
+      <h2>Simulación de llamada</h2>
+      <p>Interactuá con la IA mientras finge llamadas fraudulentas.</p>
+    </div>
+  </div>
+
+  <!-- Tarjeta 4 con botón -->
+  <div class="card">
+    <img src="warning-icons-in-yellow-triangle-free-png 2.png" alt="Estafas" class="icon">
+    <div>
+      <h2>Información de estafas comunes</h2>
+      <a href="info2.html" class="btn-link">Leer más</a>
+    </div>
+  </div>
+
+  <!-- Flecha para volver -->
+  <a href="index.html" class="flecha">⬅</a>
 </body>
 </html>
