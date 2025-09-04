@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Llamada</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Llamadas</title>
   <style>
     body {
       margin: 0;
-      font-family: 'Arial', sans-serif;
-      background-color: #d6f0fa; /* Fondo celeste claro */
+      padding: 0;
+      background-color: #d6f1ff;
+      font-family: Arial, sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -17,145 +18,147 @@
     }
 
     .titulo {
-      background-color: #1f6aa5;
+      background-color: #1565c0;
       color: white;
-      padding: 20px 40px;
-      border-radius: 10px;
-      font-size: 22px;
-      margin-bottom: 30px;
+      font-size: 24px;
+      font-weight: bold;
+      padding: 15px 30px;
+      border-radius: 8px;
+      text-align: center;
+      margin-bottom: 20px;
     }
 
     .contenedor {
-      background-color: #1f6aa5;
-      border-radius: 10px;
+      background-color: #1565c0;
       padding: 20px;
-      width: 400px;
+      border-radius: 8px;
+      width: 80%;
+      max-width: 500px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      color: white;
+      gap: 10px;
     }
 
     .tip {
       background-color: white;
-      color: black;
-      font-size: 14px;
       padding: 10px;
-      border-radius: 8px;
-      margin-bottom: 15px;
+      border-radius: 6px;
+      font-size: 14px;
       display: flex;
       align-items: center;
-      gap: 8px;
-      text-align: left;
+      gap: 10px;
     }
 
-    .tip i {
-      color: #ffcc00;
-      font-size: 20px;
+    .tip img {
+      width: 24px;
+      height: 24px;
     }
 
-    audio {
+    .barra-audio {
       width: 100%;
-      margin: 10px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .barra {
+      flex-grow: 1;
+      margin: 0 5px;
     }
 
     .controles {
+      font-size: 20px;
       display: flex;
       justify-content: center;
-      gap: 15px;
-      margin: 10px 0;
-    }
-
-    .controles i {
-      font-size: 22px;
+      gap: 20px;
+      color: white;
       cursor: pointer;
     }
 
-    .boton {
+    .btn-repetir {
       background-color: white;
-      color: black;
-      padding: 10px 20px;
-      border-radius: 6px;
       border: none;
-      cursor: pointer;
+      border-radius: 6px;
+      padding: 10px 20px;
       font-size: 16px;
-      margin: 10px 0;
+      cursor: pointer;
+      font-weight: bold;
     }
 
     .acciones {
       display: flex;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
-      gap: 20px;
-      margin-top: 15px;
+      width: 100%;
+      margin-top: 10px;
     }
 
     .btn-correcciones {
-      background-color: #ff7f7f;
-      color: black;
+      background-color: #f28b82;
       border: none;
-      padding: 10px 20px;
+      padding: 10px 15px;
       border-radius: 6px;
+      font-size: 16px;
       cursor: pointer;
-      font-size: 15px;
+      font-weight: bold;
     }
 
-    .microfono {
-      background-color: white;
-      border-radius: 50%;
+    .microfono-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .microfono-btn img {
       width: 50px;
       height: 50px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 22px;
     }
 
-    /* Flecha volver */
-    .flecha {
+    .volver {
       position: absolute;
       bottom: 20px;
       right: 20px;
-      font-size: 40px;
+    }
+
+    .volver img {
+      width: 50px;
+      height: 50px;
       cursor: pointer;
-      color: black;
-      text-decoration: none;
     }
   </style>
-  <!-- Font Awesome para íconos -->
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body>
-
-  <div class="titulo">Escucha con atencion</div>
+  <div class="titulo">Escucha con atención</div>
 
   <div class="contenedor">
     <div class="tip">
-      <i class="fas fa-exclamation-triangle"></i>
+      <img src="warning-icons-in-yellow-triangle-free-png 2.png" alt="Alerta">
       <span>Tip: Los estafadores pueden hacerse pasar por un familiar o el banco entre otras empresas que requieran pagos. ¡Cuidado!</span>
     </div>
 
-    <audio controls>
-      <source src="audio.mp3" type="audio/mpeg">
-      Tu navegador no soporta audio.
-    </audio>
-
-    <div class="controles">
-      <i class="fas fa-backward"></i>
-      <i class="fas fa-play"></i>
-      <i class="fas fa-forward"></i>
+    <div class="barra-audio">
+      <span>00:00</span>
+      <input type="range" class="barra">
+      <span>00:00</span>
     </div>
 
-    <button class="boton">Repetir audio</button>
+    <div class="controles">
+      ⏮ ⏯ ⏭
+    </div>
+
+    <button class="btn-repetir">Repetir audio</button>
 
     <div class="acciones">
-      <button class="btn-correcciones" onclick="location.href='correcciones.html'">Correcciones</button>
-      <div class="microfono"><i class="fas fa-microphone"></i></div>
+      <button class="btn-correcciones">Correcciones</button>
+      <button class="microfono-btn">
+        <img src="Group 37.png" alt="Micrófono">
+      </button>
     </div>
   </div>
 
-  <a href="index.html" class="flecha">⬅</a>
-
+  <a href="index.html" class="volver">
+    <img src="507257 3.png" alt="Volver">
+  </a>
 </body>
 </html>
