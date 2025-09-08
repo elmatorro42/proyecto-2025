@@ -1,17 +1,20 @@
 import ollama
 import pyttsx3
+from ollama import chat
+from ollama import ChatResponse
 
 modelo = "mistral"
 engine = pyttsx3.init()
 
 def llamada_estafador(texto):
     print(f"[Llamada] Estafador dice: {texto}")
-    engine.say(     )
+    engine.say(texto)  # Usar el texto que llega a la función
     engine.runAndWait()
+
 
 def iniciar_chat():
     print("Estafador (IA Local): ¡Felicidades! Usted ganó un premio increíble.")
-
+    
     historial = []
     insistencia_nivel = 0  # 0: simpático, 1: insistente, 2: agresivo
 
@@ -26,6 +29,7 @@ def iniciar_chat():
         if any(palabra in user_input for palabra in ["no", "dudo", "sospecho", "mentira", "imposible", "nunca"]):
             insistencia_nivel = min(insistencia_nivel + 1, 2)
 
+        """
         # Definir personalidad según nivel
         if insistencia_nivel == 0:
             personalidad = (
@@ -46,7 +50,9 @@ def iniciar_chat():
             )
 
         historial.append({'role': 'user', 'content': user_input})
+        """
 
+        """ TESTEANDO LA IA
         response = ollama.chat(
             model=modelo,
             messages=[
@@ -61,6 +67,13 @@ def iniciar_chat():
         respuesta_texto = response['message']['content']
         llamada_estafador(respuesta_texto)
         historial.append({'role': 'assistant', 'content': respuesta_texto})
+
+        """
+
+        response: ChatResponse = chat(model="gemma3", messages=[
+            
+        ])
+
 
 if __name__ == "__main__":
     iniciar_chat()
