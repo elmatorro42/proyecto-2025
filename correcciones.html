@@ -8,14 +8,12 @@
     body {
       margin: 0;
       padding: 0;
-      background-color: #e6f7ff; /* Fondo celeste claro */
+      background-color: #e6f7ff; 
       font-family: 'Courier New', monospace;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
-
-    /* Encabezado azul */
     .encabezado {
       background-color: #1e5f91;
       color: white;
@@ -25,18 +23,8 @@
       border-radius: 10px;
       width: 80%;
     }
-
-    .encabezado h2 {
-      margin: 0;
-      font-size: 22px;
-    }
-
-    .encabezado p {
-      margin: 8px 0 0 0;
-      font-size: 14px;
-    }
-
-    /* Tarjeta central */
+    .encabezado h2 { margin: 0; font-size: 22px; }
+    .encabezado p { margin: 8px 0 0 0; font-size: 14px; }
     .tarjeta {
       background-color: white;
       margin-top: 20px;
@@ -46,7 +34,6 @@
       text-align: center;
       box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     }
-
     .etiqueta-roja, .etiqueta-verde {
       display: inline-block;
       padding: 6px 12px;
@@ -55,16 +42,8 @@
       color: white;
       margin-bottom: 8px;
     }
-
-    .etiqueta-roja {
-      background-color: #f08080;
-    }
-
-    .etiqueta-verde {
-      background-color: #90ee90;
-      color: black;
-    }
-
+    .etiqueta-roja { background-color: #f08080; }
+    .etiqueta-verde { background-color: #90ee90; color: black; }
     .caja {
       background-color: #d9d9d9;
       padding: 10px;
@@ -73,8 +52,6 @@
       font-size: 14px;
       text-align: left;
     }
-
-    /* Botón continuar */
     .continuar-btn {
       background-color: #1e5f91;
       color: white;
@@ -85,30 +62,55 @@
       cursor: pointer;
       margin-top: 10px;
     }
-
-    .continuar-btn:hover {
-      background-color: #15486c;
-    }
+    .continuar-btn:hover { background-color: #15486c; }
   </style>
 </head>
 <body>
 
   <div class="encabezado">
-    <h2>correccion de tu respuesta</h2>
+    <h2>Correcciones de tu simulación</h2>
     <p>Revisá qué podrías mejorar para evitar caer en estafas</p>
   </div>
 
-  <div class="tarjeta">
-    <div class="etiqueta-roja">Tu respuesta:</div>
-    <div class="caja">""</div>
+  <div class="tarjeta" id="resumen"></div>
 
-    <div class="etiqueta-verde">Sugerencia:</div>
-    <div class="caja">""</div>
+  <script>
+    const historial = JSON.parse(localStorage.getItem("historialChat")) || [];
+    const resultado = localStorage.getItem("resultadoFinal") || "Sin resultado";
 
-    <button class="continuar-btn" onclick="window.location.href='formulario2.html'">
-      Continuar
-    </button>
-  </div>
+    const resumenDiv = document.getElementById("resumen");
 
+    historial.forEach((item, i) => {
+      const respLabel = document.createElement("div");
+      respLabel.className = "etiqueta-roja";
+      respLabel.textContent = `Tu respuesta ${i+1}:`;
+      resumenDiv.appendChild(respLabel);
+
+      const respBox = document.createElement("div");
+      respBox.className = "caja";
+      respBox.textContent = item.respuesta;
+      resumenDiv.appendChild(respBox);
+
+      const sugLabel = document.createElement("div");
+      sugLabel.className = "etiqueta-verde";
+      sugLabel.textContent = "Sugerencia:";
+      resumenDiv.appendChild(sugLabel);
+
+      const sugBox = document.createElement("div");
+      sugBox.className = "caja";
+      sugBox.textContent = item.sugerencia;
+      resumenDiv.appendChild(sugBox);
+    });
+
+    const finalLabel = document.createElement("h3");
+    finalLabel.textContent = "Resultado final: " + resultado;
+    resumenDiv.appendChild(finalLabel);
+
+    const continuarBtn = document.createElement("button");
+    continuarBtn.className = "continuar-btn";
+    continuarBtn.textContent = "Continuar";
+    continuarBtn.onclick = () => window.location.href = "formulario2.html";
+    resumenDiv.appendChild(continuarBtn);
+  </script>
 </body>
 </html>
