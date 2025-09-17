@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Entrenador Anti-Estafas - Simulador Completo</title>
-
+  <title>Entrenador Anti-Estafas</title>
   <style>
     body {
       margin: 0;
@@ -14,10 +13,9 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-height: 100vh;
+      height: 100vh;
     }
 
-    /* Encabezado */
     h2 {
       width: 100%;
       text-align: center;
@@ -28,137 +26,91 @@
       border-bottom: 2px solid black;
     }
 
-    /* Caja de chat */
-    .chat-box {
+    /* Pantalla de llamada */
+    .pantalla {
       background: white;
-      margin-top: 20px;
-      padding: 12px;
+      margin-top: 10px;
+      padding: 15px;
       border-radius: 10px;
-      width: 90%;
-      max-width: 720px;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0 0 10px rgba(0,0,0,.25);
-      flex: 1 0 auto;
+      text-align: center;
+      width: 300px;
     }
 
-    .top-info {
-      display: flex;
-      gap: 10px;
-      align-items: center;
+    .pantalla img {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
       margin-bottom: 8px;
     }
 
-    .avatar {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
+    .pantalla h3 {
+      margin: 5px 0;
+      font-size: 16px;
     }
 
-    .caller {
-      font-weight: bold;
-    }
-
-    .messages {
+    /* Área de chat */
+    #chat {
       flex: 1;
+      width: 90%;
+      max-width: 500px;
+      margin-top: 15px;
+      padding: 10px;
+      background: #e6f7ff;
+      border-radius: 10px;
       overflow-y: auto;
-      max-height: 58vh;
-      margin-bottom: 10px;
-      padding-right: 5px;
+      display: flex;
+      flex-direction: column;
     }
 
     .msg {
-      margin: 6px 0;
-      padding: 10px 14px;
-      border-radius: 14px;
-      max-width: 78%;
-      font-size: 14px;
+      padding: 10px 15px;
+      border-radius: 10px;
+      margin: 5px 0;
+      max-width: 70%;
       word-wrap: break-word;
-      box-shadow: 0 1px 0 rgba(0,0,0,0.05) inset;
+    }
+
+    .user {
+      background: #1e5f91;
+      color: white;
+      align-self: flex-end;
     }
 
     .bot {
       background: #f1f1f1;
-      color: #111;
-      margin-right: auto;
-      text-align: left;
+      color: black;
+      align-self: flex-start;
     }
 
-    .user {
-      background: #0078ff;
-      color: white;
-      margin-left: auto;
-      text-align: right;
-    }
-
-    .username {
-      font-size: 12px;
-      color: #666;
-      margin-bottom: 4px;
-    }
-
-    /* Opciones de respuesta */
-    .options {
+    /* Input */
+    .input-container {
       display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: 6px;
+      justify-content: space-between;
+      align-items: center;
+      margin: 10px 0;
+      width: 90%;
+      max-width: 500px;
     }
 
-    .options button {
-      background-color: black;
-      color: white;
-      padding: 10px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      text-align: left;
-      font-family: 'Courier New', monospace;
-    }
-
-    .hint {
-      font-size: 12px;
-      color: #333;
-      margin-top: 8px;
-    }
-
-    /* Área para escribir */
-    .writer {
-      display: flex;
-      gap: 8px;
-      align-items: flex-end;
-      margin-top: 10px;
-    }
-
-    .writer textarea {
+    .input-container textarea {
       flex: 1;
-      height: 56px;
+      height: 50px;
       padding: 10px;
       border: 2px solid black;
-      border-radius: 8px;
       resize: none;
       font-size: 14px;
-      font-family: 'Courier New', monospace;
+      border-radius: 6px;
     }
 
     .escribir-btn {
+      margin-left: 10px;
       background-color: black;
       color: white;
-      padding: 10px 16px;
-      font-size: 14px;
+      padding: 10px 15px;
+      font-size: 16px;
       border: none;
       border-radius: 6px;
       cursor: pointer;
-    }
-
-    /* Botón correcciones */
-    .controls {
-      margin-top: 14px;
-      width: 90%;
-      max-width: 720px;
-      display: flex;
-      justify-content: flex-start;
-      margin-bottom: 26px;
     }
 
     .correcciones-btn {
@@ -169,18 +121,7 @@
       border: none;
       border-radius: 6px;
       cursor: pointer;
-    }
-
-    .end-note {
-      font-size: 13px;
-      color: #222;
-      margin-top: 8px;
-    }
-
-    @media (max-width:480px) {
-      .messages { max-height: 45vh; }
-      .chat-box { padding: 10px; }
-      .avatar { width: 40px; height: 40px; }
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -188,404 +129,240 @@
 <body>
   <h2>Número Desconocido</h2>
 
-  <div class="chat-box" role="main">
-    <div class="top-info">
-      <img class="avatar" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Avatar" />
-      <div>
-        <div class="caller" id="caller-number">+54 911 5793-8194</div>
-        <div class="username" id="caller-desc">Simulación — Estafador</div>
-      </div>
-    </div>
-
-    <div class="messages" id="messages" aria-live="polite"></div>
-
-    <div id="options" class="options" aria-label="Opciones de respuesta"></div>
-
-    <div class="writer" style="margin-top:6px;">
-      <textarea id="miTextarea" placeholder="Escribí tu respuesta o elegí una opción..." aria-label="Tu respuesta"></textarea>
-      <button class="escribir-btn" id="sendBtn">Enviar</button>
-    </div>
-
-    <div class="hint" id="hint">Podés escribir libremente — el sistema intentará entender tu respuesta. También podés elegir un botón.</div>
+  <div class="pantalla">
+    <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Avatar" />
+    <h3>+54 911 5793-8194</h3>
   </div>
 
-  <div class="controls">
-    <button class="correcciones-btn" onclick="window.location.href='correcciones.html'">
-      Correcciones
-    </button>
+  <!-- Chat -->
+  <div id="chat"></div>
+
+  <!-- Input -->
+  <div class="input-container">
+    <textarea id="input" placeholder="Escribí tu respuesta..."></textarea>
+    <button class="escribir-btn" onclick="sendMessage()">Enviar</button>
   </div>
+
+  <button class="correcciones-btn" onclick="window.location.href='correcciones.html'">
+    Correcciones
+  </button>
 
   <script>
-    /************************************************************************
-     * Árbol de conversación ampliado. Nuevos nodos para varios tipos de estafa.
-     * Para nodos que pidan códigos/contraseñas usamos la propiedad:
-     *   expect_digit: true  -> cualquier input que contenga 3+ dígitos será aceptado
-     *
-     * Muchas opciones comparten 'next' para que distintas respuestas
-     * lleven al mismo camino.
-     ************************************************************************/
-
-    const script = {
-      start: {
-        text: "Hola, soy del banco. Detectamos un movimiento sospechoso en tu cuenta.",
-        options: [
-          { text: "¿Qué movimiento?", next: "detalle", triggers: ["qué movimiento", "que movimiento", "detalle", "que paso", "que pasó"] },
-          { text: "No me interesa / Cortar", next: "fin_desconfia", triggers: ["no me interesa", "cortar", "colgar", "no gracias"] },
-          { text: "¿Con quién hablo?", next: "identidad", triggers: ["con quien", "quién habla", "quien habla", "quien eres"] },
-          { text: "Me llegó un WhatsApp similar", next: "whatsapp_intro", triggers: ["whatsapp", "mensaje", "link", "enlace"] }
-        ]
-      },
-
-      identidad: {
-        text: "Me llamo Martín del área de seguridad. Hay una transferencia de $5000. Confirmás que no la hiciste?",
-        options: [
-          { text: "No la hice", next: "confirmar_no", triggers: ["no la hice", "no", "no fui yo"] },
-          { text: "Sí la hice", next: "fin_error", triggers: ["sí", "si", "la hice"] },
-          { text: "Pasame prueba", next: "prueba_transaccion", triggers: ["prueba", "mostrar", "quiero prueba"] }
-        ]
-      },
-
-      prueba_transaccion: {
-        text: "Te puedo enviar el comprobante al correo; confirmame tu correo para enviarlo.",
-        options: [
-          { text: "Dar correo", next: "fin_cae", triggers: ["@", "gmail", "hotmail", "dar correo", "mi correo"] },
-          { text: "No doy correo", next: "fin_desconfia", triggers: ["no", "no doy", "prefiero no"] }
-        ]
-      },
-
-      detalle: {
-        text: "Fue una transferencia internacional. Vamos a enviarte un código al celular para validar, ¿lo recibiste?",
-        options: [
-          { text: "Recibí un código", next: "verificar_codigo", triggers: ["recibi", "llego", "lo recibi", "código"] },
-          { text: "No recibí nada", next: "reenviar_codigo", triggers: ["no", "no recibí", "nada"] },
-          { text: "No doy datos", next: "fin_desconfia", triggers: ["no doy", "no quiero", "me niego"] }
-        ]
-      },
-
-      reenviar_codigo: {
-        text: "Te reenvío el código. Avisame apenas te llegue.",
-        options: [
-          { text: "Avisame cuando llegue", next: "espera_codigo", triggers: ["avisame", "avisame", "cuando llegue"] },
-          { text: "No quiero", next: "fin_desconfia", triggers: ["no", "no quiero"] }
-        ]
-      },
-
-      espera_codigo: {
-        text: "Código enviado: XXXX. Pasame los 6 dígitos que te llegó.",
-        // Este nodo acepta cualquier número (expect_digit) y lo manda a confirmar_codigo
-        options: [
-          { text: "Pasar código (ej: 123456)", next: "confirmar_codigo", expect_digit: true },
-          { text: "No te lo doy", next: "fin_desconfia", triggers: ["no", "no doy"] }
-        ]
-      },
-
-      verificar_codigo: {
-        text: "Perfecto. Pasame el código que llegó al teléfono.",
-        options: [
-          { text: "Te paso el código", next: "confirmar_codigo", expect_digit: true },
-          { text: "No lo doy", next: "fin_desconfia", triggers: ["no", "no doy"] }
-        ]
-      },
-
-      confirmar_codigo: {
-        text: "Gracias. Verifiqué el código. Ahora necesito confirmar el número de tarjeta para finalizar.",
-        options: [
-          { text: "Dar número de tarjeta", next: "fin_cae", triggers: ["tarjeta", "numero", "número", "dar tarjeta"] },
-          { text: "No doy tarjeta", next: "fin_desconfia", triggers: ["no doy", "no doy tarjeta"] }
-        ]
-      },
-
-      confirmar_no: {
-        text: "Para bloquear la operación necesito 4 últimos dígitos del DNI. Pasalos por favor.",
-        options: [
-          { text: "Dar 4 últimos del DNI", next: "fin_cae", expect_digit: true },
-          { text: "No doy datos", next: "fin_desconfia", triggers: ["no", "no doy"] }
-        ]
-      },
-
-      // --- WhatsApp / enlace malicioso ---
-      whatsapp_intro: {
-        text: "Te mandamos un WhatsApp con un enlace para 'confirmar la operación'. ¿Abriste el link?",
-        options: [
-          { text: "Sí abrí el link", next: "whatsapp_link", triggers: ["si", "sí", "abri", "abrí", "abrir"] },
-          { text: "No lo abrí", next: "fin_desconfia", triggers: ["no", "no lo abri", "no lo abrí"] },
-          { text: "Mandámelo otra vez", next: "whatsapp_resend", triggers: ["mandame", "reenviar", "mandalo"] }
-        ]
-      },
-
-      whatsapp_resend: {
-        text: "Reenviado. Es un link corto que requiere que ingreses tu clave para 'verificar'.",
-        options: [
-          { text: "Ingresé mi clave", next: "fin_cae", triggers: ["clave", "la clave", "ingrese"] },
-          { text: "No ingreso nada", next: "fin_desconfia", triggers: ["no", "no ingreso"] }
-        ]
-      },
-
-      whatsapp_link: {
-        text: "Al abrir pedía la clave de mi banco y un código de 2FA. ¿Lo ingresaste?",
-        options: [
-          { text: "Sí, ingresé la clave", next: "fin_cae", triggers: ["si", "sí", "ingresé", "ingrese", "clave"] },
-          { text: "No ingresé", next: "fin_desconfia", triggers: ["no", "no ingrese"] }
-        ]
-      },
-
-      // --- Oferta de trabajo falsa ---
-      fake_job_intro: {
-        text: "Te contactó una 'empresa' por una oferta de trabajo y pide que pagues una matrícula/curso. ¿Te pasó?",
-        options: [
-          { text: "Sí, me pidieron pagar", next: "fake_job_pay", triggers: ["pagar", "matricula", "curso", "pago"] },
-          { text: "No, es sospechoso", next: "fin_desconfia", triggers: ["sospechoso", "no", "no gracias"] }
-        ]
-      },
-
-      fake_job_pay: {
-        text: "Te piden transferir a una cuenta y prometen devolución. ¿Transferiste?",
-        options: [
-          { text: "Transferí", next: "fin_cae", triggers: ["transferi", "transferí", "transferi"] },
-          { text: "No transferí", next: "fin_desconfia", triggers: ["no", "no transferi"] }
-        ]
-      },
-
-      // --- Marketplace / compra falsa ---
-      marketplace_intro: {
-        text: "Publicación muy barata en MercadoLibre. El vendedor pide pago por fuera con enlace. ¿Aceptaste?",
-        options: [
-          { text: "Sí, pagué por enlace", next: "fin_cae", triggers: ["si", "sí", "pague", "pagé", "pague por fuera"] },
-          { text: "No, lo denuncio", next: "fin_desconfia", triggers: ["no", "denunciar", "denuncio"] }
-        ]
-      },
-
-      // --- Sorteo falso ---
-      lottery_intro: {
-        text: "¡Felicitaciones! Ganaste un sorteo. Para cobrar necesitas un código y una 'verificación' por SMS.",
-        options: [
-          { text: "Me pidieron código", next: "verificar_codigo", triggers: ["codigo", "código", "sms", "sorteo"] },
-          { text: "No participé", next: "fin_desconfia", triggers: ["no participe", "no participé", "no"] }
-        ]
-      },
-
-      // --- Soporte técnico falso ---
-      tech_support_intro: {
-        text: "Somos soporte técnico de Windows. Detectamos virus: necesitamos tu contraseña temporal para limpiar.",
-        options: [
-          { text: "Me piden contraseña", next: "expect_password", triggers: ["contraseña", "password", "clave", "contrase"] },
-          { text: "No doy contraseña", next: "fin_desconfia", triggers: ["no doy", "no", "me niego"] }
-        ]
-      },
-
-      expect_password: {
-        text: "Pasame la contraseña temporal o código que te apareció.",
-        options: [
-          { text: "Te paso contraseña/clave", next: "fin_cae", expect_digit: true },
-          { text: "No doy", next: "fin_desconfia", triggers: ["no", "no doy"] }
-        ]
-      },
-
-      // --- Alquiler falso ---
-      rental_intro: {
-        text: "Publicación de alquiler muy barata. Piden reserva por MercadoPago fuera de la plataforma.",
-        options: [
-          { text: "Hice el pago fuera", next: "fin_cae", triggers: ["pague", "pague", "pagué", "reserva"] },
-          { text: "No, lo investigo", next: "fin_desconfia", triggers: ["no", "investigo", "mejor"] }
-        ]
-      },
-
-      // --- Amigo necesitado (social engineering) ---
-      friend_need: {
-        text: "Hola, soy tu amigo Ignacio. Estoy en urgencia y necesito que me mandes plata. ¿Me ayudas?",
-        options: [
-          { text: "¿Desde dónde hablás? (verificar)", next: "ask_proof", triggers: ["desde donde", "de donde", "quien sos", "verificar"] },
-          { text: "Te transfiero", next: "fin_cae", triggers: ["transfero", "te transfiero", "te mando plata", "te doy"] }
-        ]
-      },
-
-      ask_proof: {
-        text: "Pasa una foto tuya o el último mensaje que te mandé para confirmar identidad.",
-        options: [
-          { text: "Pido prueba real y no doy plata", next: "fin_desconfia", triggers: ["pido prueba", "pido foto", "no doy plata", "no doy"] },
-          { text: "Mando plata igual", next: "fin_cae", triggers: ["mando", "transfiero", "si"] }
-        ]
-      },
-
-      // final comunes
-      fin_cae: {
-        text: "Perfecto. Gracias por la info — ya procesamos todo. (Fin de la simulación: usuario cayó en la estafa)",
-        options: [
-          { text: "Reiniciar simulación", next: "start" }
-        ]
-      },
-
-      fin_desconfia: {
-        text: "Bien hecho. Si querés podés comunicarte al 0800 oficial de tu banco. (Fin de la simulación: usuario se salvó)",
-        options: [
-          { text: "Reiniciar simulación", next: "start" }
-        ]
-      },
-
-      fin_error: {
-        text: "Si en verdad la hiciste, hablá con soporte oficial. (Fin de la simulación: usuario confirmó la operación)",
-        options: [
-          { text: "Reiniciar simulación", next: "start" }
-        ]
-      }
-    };
-
-    /************************************************************************
-     * Lógica de interacción mejorada:
-     * - detecta triggers (como antes)
-     * - si alguna opción del nodo tiene expect_digit: true y el input contiene
-     *   al menos 3 dígitos (o sólo dígitos), se considera match
-     * - se prioriza: exact triggers -> expect_digit matches -> keyword scoring
-     ************************************************************************/
-
-    const messagesEl = document.getElementById("messages");
-    const optionsEl = document.getElementById("options");
-    const textarea = document.getElementById("miTextarea");
-    const sendBtn = document.getElementById("sendBtn");
-
-    let currentNode = "start";
-
-    function normalize(s) {
-      return String(s || "")
-        .toLowerCase()
-        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-        .replace(/[^\w\s]/g, " ")
-        .replace(/\s+/g, " ").trim();
-    }
+    const chatBox = document.getElementById("chat");
+    const input = document.getElementById("input");
 
     function addMessage(text, type) {
-      const m = document.createElement("div");
-      m.className = "msg " + type;
-      m.innerText = text;
-      messagesEl.appendChild(m);
-      messagesEl.scrollTop = messagesEl.scrollHeight;
+      const div = document.createElement("div");
+      div.className = "msg " + type;
+      div.innerText = text;
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    function renderOptions(node) {
-      optionsEl.innerHTML = "";
-      if (node.options && node.options.length) {
-        node.options.forEach(opt => {
-          const btn = document.createElement("button");
-          btn.innerText = opt.text;
-          btn.onclick = () => {
-            addMessage(opt.text, "user");
-            if (opt.next === "start") {
-              setTimeout(restartConversation, 300);
-              return;
-            }
-            setTimeout(() => showNode(opt.next), 350);
-          };
-          optionsEl.appendChild(btn);
+    async function sendMessage() {
+      const text = input.value.trim();
+      if (!text) return;
+
+      addMessage(text, "user");
+      input.value = "";
+
+      try {
+        const res = await fetch("http://localhost:5000/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: text })
         });
-      } else {
-        const btn = document.createElement("button");
-        btn.innerText = "Reiniciar simulación";
-        btn.onclick = restartConversation;
-        optionsEl.appendChild(btn);
+
+        const data = await res.json();
+        addMessage(data.reply, "bot");
+      } catch (err) {
+        addMessage("⚠️ Error de conexión con el servidor", "bot");
       }
     }
-
-    function showNode(key) {
-      currentNode = key;
-      const node = script[key];
-      addMessage(node.text, "bot");
-      renderOptions(node);
-    }
-
-    function restartConversation() {
-      messagesEl.innerHTML = "";
-      optionsEl.innerHTML = "";
-      textarea.value = "";
-      showNode("start");
-    }
-
-    function handleUserText(raw) {
-      const userText = String(raw || "").trim();
-      if (!userText) return;
-      addMessage(userText, "user");
-
-      const node = script[currentNode];
-      if (!node || !node.options || node.options.length === 0) {
-        setTimeout(restartConversation, 400);
-        return;
-      }
-
-      const input = normalize(userText);
-
-      // 1) Exact trigger matching (substring)
-      for (const opt of node.options) {
-        if (!opt.triggers || !opt.triggers.length) continue;
-        for (const trig of opt.triggers) {
-          if (!trig) continue;
-          const trigNorm = normalize(trig);
-          if (trigNorm && input.indexOf(trigNorm) !== -1) {
-            // match
-            setTimeout(() => showNode(opt.next), 350);
-            return;
-          }
-        }
-      }
-
-      // 2) expect_digit handling: if any option expects digit and input contains >=3 digits -> match
-      const digitMatch = userText.match(/\d{3,}/);
-      if (digitMatch) {
-        for (const opt of node.options) {
-          if (opt.expect_digit) {
-            setTimeout(() => showNode(opt.next), 350);
-            return;
-          }
-        }
-      }
-
-      // 3) keyword scoring (fuzzy-ish): count overlapping words with triggers
-      const words = input.split(" ").filter(Boolean);
-      let bestOpt = null;
-      let bestScore = 0;
-      for (const opt of node.options) {
-        if (!opt.triggers || !opt.triggers.length) continue;
-        for (const trig of opt.triggers) {
-          const trigWords = normalize(trig).split(" ").filter(Boolean);
-          let score = 0;
-          for (const w of trigWords) {
-            if (words.includes(w)) score++;
-          }
-          if (score > bestScore) {
-            bestScore = score;
-            bestOpt = opt;
-          }
-        }
-      }
-      if (bestOpt && bestScore > 0) {
-        setTimeout(() => showNode(bestOpt.next), 350);
-        return;
-      }
-
-      // 4) fallback: no entendimos -> pedimos que elija botón (mostramos mensaje guía)
-      setTimeout(() => {
-        addMessage("No te entendí. Elegí una de las opciones visibles o escribí algo relacionado (por ejemplo: 'no', 'sí', 'clave', 'codigo').", "bot");
-      }, 300);
-    }
-
-    // eventos
-    sendBtn.addEventListener("click", () => {
-      const txt = textarea.value;
-      textarea.value = "";
-      handleUserText(txt);
-    });
-
-    textarea.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        sendBtn.click();
-      }
-    });
-
-    // iniciar
-    window.onload = () => {
-      showNode("start");
-      textarea.focus();
-    };
   </script>
-  
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Entrenador Anti-Estafas</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Courier New', monospace;
+      background-color: #1e5f91;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+    }
+
+    h2 {
+      width: 100%;
+      text-align: center;
+      background-color: white;
+      margin: 0;
+      padding: 15px;
+      font-size: 20px;
+      border-bottom: 2px solid black;
+    }
+
+    /* Pantalla de llamada */
+    .pantalla {
+      background: white;
+      margin-top: 10px;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+      width: 300px;
+    }
+
+    .pantalla img {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      margin-bottom: 8px;
+    }
+
+    .pantalla h3 {
+      margin: 5px 0;
+      font-size: 16px;
+    }
+
+    /* Área de chat */
+    #chat {
+      flex: 1;
+      width: 90%;
+      max-width: 500px;
+      margin-top: 15px;
+      padding: 10px;
+      background: #e6f7ff;
+      border-radius: 10px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .msg {
+      padding: 10px 15px;
+      border-radius: 10px;
+      margin: 5px 0;
+      max-width: 70%;
+      word-wrap: break-word;
+    }
+
+    .user {
+      background: #1e5f91;
+      color: white;
+      align-self: flex-end;
+    }
+
+    .bot {
+      background: #f1f1f1;
+      color: black;
+      align-self: flex-start;
+    }
+
+    /* Input */
+    .input-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 10px 0;
+      width: 90%;
+      max-width: 500px;
+    }
+
+    .input-container textarea {
+      flex: 1;
+      height: 50px;
+      padding: 10px;
+      border: 2px solid black;
+      resize: none;
+      font-size: 14px;
+      border-radius: 6px;
+    }
+
+    .escribir-btn {
+      margin-left: 10px;
+      background-color: black;
+      color: white;
+      padding: 10px 15px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .correcciones-btn {
+      background-color: #f08080;
+      color: white;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>Número Desconocido</h2>
+
+  <div class="pantalla">
+    <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Avatar" />
+    <h3>+54 911 5793-8194</h3>
+  </div>
+
+  <!-- Chat -->
+  <div id="chat"></div>
+
+  <!-- Input -->
+  <div class="input-container">
+    <textarea id="input" placeholder="Escribí tu respuesta..."></textarea>
+    <button class="escribir-btn" onclick="sendMessage()">Enviar</button>
+  </div>
+
+  <button class="correcciones-btn" onclick="window.location.href='correcciones.html'">
+    Correcciones
+  </button>
+
+  <script>
+    const chatBox = document.getElementById("chat");
+    const input = document.getElementById("input");
+
+    function addMessage(text, type) {
+      const div = document.createElement("div");
+      div.className = "msg " + type;
+      div.innerText = text;
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    async function sendMessage() {
+      const text = input.value.trim();
+      if (!text) return;
+
+      addMessage(text, "user");
+      input.value = "";
+
+      try {
+        const res = await fetch("http://localhost:5000/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: text })
+        });
+
+        const data = await res.json();
+        addMessage(data.reply, "bot");
+      } catch (err) {
+        addMessage("⚠️ Error de conexión con el servidor", "bot");
+      }
+    }
+  </script>
 </body>
 </html>
