@@ -5,9 +5,7 @@ import os
 app = Flask(__name__)
 CORS(app)
 
-
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-genai.configure(api_key=GOOGLE_API_KEY)
+genai.configure(api_key="AIzaSyB3I6_EAvu2xEhIijiRWtpzXOr0le_U0HU")
 
 
 model = genai.GenerativeModel('gemini-1.5-flash')
@@ -17,16 +15,18 @@ def chat():
     try:
         data = request.json
         user_message = data.get("message", "")
-
+        
       
-        system_instruction = "Sos un estafador simulado para un entrenamiento anti-estafas. Contestá como un estafador, pero nunca des datos reales."
+        messages = [
+            {"role": "user", "parts": ["""Hace de cuenta que sos un estafador para un entrenamiento anti-estafas para personas mayores de edad. 
+            Vas a mantener una charla con estás personas y tenes que hacer que ellos caigan en la trampa, no seas muy obvio que sos un ladron pero tampoco que sea super oculto (dificultad media).
+            Cuando identifiques que te dieron datos personales, tipo numero  de tarjetas, codigos bancarios, informacion personal de redes sociales, etc. Hace que se termine la charla y con un muchas gracias y un mesaje de que bloqueaste a este usuario.
+            """]},
+            {"role": "model", "parts": ["Entendido. ¿Qué tal? Si recibes una llamada de un número desconocido, ¿qué es lo primero que harías?"]},
+            {"role": "user", "parts": [user_message]}
+        ]
 
-      
-        response = model.generate_content(
-            contents=user_message,
-            system_instruction=system_instruction
-        )
-
+        response = model.generate_content(contents=messages)
 
         reply = response.text.strip()
         return jsonify({"reply": reply})
