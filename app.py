@@ -7,7 +7,6 @@ CORS(app)
 
 genai.configure(api_key="AIzaSyB3I6_EAvu2xEhIijiRWtpzXOr0le_U0HU")
 
-
 model = genai.GenerativeModel('gemini-1.5-flash')
 
 @app.route("/chat", methods=["POST"])
@@ -18,9 +17,9 @@ def chat():
         
       
         messages = [
-            {"role": "user", "parts": ["""Hace de cuenta que sos un estafador para un entrenamiento anti-estafas para personas mayores de edad. 
+            {"role": "user", "parts": ["""quiero que tu envies el mensaje primero ya que un estafador se comunica con la gente y no viceversa. Hace de cuenta que sos un estafador virtual para un entrenamiento anti-estafas para personas mayores de edad. 
             Vas a mantener una charla con estás personas y tenes que hacer que ellos caigan en la trampa, no seas muy obvio que sos un ladron pero tampoco que sea super oculto (dificultad media).
-            Cuando identifiques que te dieron datos personales, tipo numero  de tarjetas, codigos bancarios, informacion personal de redes sociales, etc. Hace que se termine la charla y con un muchas gracias y un mesaje de que bloqueaste a este usuario.
+            Cuando identifiques que te dieron datos personales, tipo numero  de tarjetas, codigos bancarios, informacion personal de redes sociales, etc. Hace que se termine la charla y con un muchas gracias y no respondas mas y decile que esta bloqueado.
             """]},
             {"role": "model", "parts": ["Entendido. ¿Qué tal? Si recibes una llamada de un número desconocido, ¿qué es lo primero que harías?"]},
             {"role": "user", "parts": [user_message]}

@@ -1,184 +1,199 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Entrenador Anti-Estafas</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Courier New', monospace;
-      background-color: #1e5f91;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      height: 100vh;
-    }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Entrenador Anti-Estafas</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Courier New', monospace;
+            background-color: #1e5f91;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+        }
 
-    h2 {
-      width: 100%;
-      text-align: center;
-      background-color: white;
-      margin: 0;
-      padding: 15px;
-      font-size: 20px;
-      border-bottom: 2px solid black;
-    }
+        h2 {
+            width: 100%;
+            text-align: center;
+            background-color: white;
+            margin: 0;
+            padding: 15px;
+            font-size: 20px;
+            border-bottom: 2px solid black;
+        }
 
-    /* Pantalla de llamada */
-    .pantalla {
-      background: white;
-      margin-top: 10px;
-      padding: 15px;
-      border-radius: 10px;
-      text-align: center;
-      width: 300px;
-    }
+        /* Pantalla de llamada */
+        .pantalla {
+            background: white;
+            margin-top: 10px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            width: 300px;
+        }
 
-    .pantalla img {
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      margin-bottom: 8px;
-    }
+        .pantalla img {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            margin-bottom: 8px;
+        }
 
-    .pantalla h3 {
-      margin: 5px 0;
-      font-size: 16px;
-    }
+        .pantalla h3 {
+            margin: 5px 0;
+            font-size: 16px;
+        }
 
-    /* Área de chat */
-    #chat {
-      flex: 1;
-      width: 90%;
-      max-width: 500px;
-      margin-top: 15px;
-      padding: 10px;
-      background: #e6f7ff;
-      border-radius: 10px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-    }
+        /* Área de chat */
+        #chat {
+            flex: 1;
+            width: 90%;
+            max-width: 500px;
+            margin-top: 15px;
+            padding: 10px;
+            background: #e6f7ff;
+            border-radius: 10px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
 
-    .msg {
-      padding: 10px 15px;
-      border-radius: 10px;
-      margin: 5px 0;
-      max-width: 70%;
-      word-wrap: break-word;
-    }
+        .msg {
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin: 5px 0;
+            max-width: 70%;
+            word-wrap: break-word;
+        }
 
-    .user {
-      background: #1e5f91;
-      color: white;
-      align-self: flex-end;
-    }
+        .user {
+            background: #1e5f91;
+            color: white;
+            align-self: flex-end;
+        }
 
-    .bot {
-      background: #f1f1f1;
-      color: black;
-      align-self: flex-start;
-    }
+        .bot {
+            background: #f1f1f1;
+            color: black;
+            align-self: flex-start;
+        }
 
-    /* Input */
-    .input-container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 10px 0;
-      width: 90%;
-      max-width: 500px;
-    }
+        /* Input */
+        .input-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+            width: 90%;
+            max-width: 500px;
+        }
 
-    .input-container textarea {
-      flex: 1;
-      height: 50px;
-      padding: 10px;
-      border: 2px solid black;
-      resize: none;
-      font-size: 14px;
-      border-radius: 6px;
-    }
+        .input-container textarea {
+            flex: 1;
+            height: 50px;
+            padding: 10px;
+            border: 2px solid black;
+            resize: none;
+            font-size: 14px;
+            border-radius: 6px;
+        }
 
-    .escribir-btn {
-      margin-left: 10px;
-      background-color: black;
-      color: white;
-      padding: 10px 15px;
-      font-size: 16px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
+        .escribir-btn {
+            margin-left: 10px;
+            background-color: black;
+            color: white;
+            padding: 10px 15px;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
 
-    .correcciones-btn {
-      background-color: #f08080;
-      color: white;
-      padding: 10px 20px;
-      font-size: 16px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-  </style>
+        .correcciones-btn {
+            background-color: #f08080;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 
 <body>
-  <h2>Número Desconocido</h2>
+    <h2>Número Desconocido</h2>
 
-  <div class="pantalla">
-    <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Avatar" />
-    <h3>+54 911 5793-8194</h3>
-  </div>
+    <div class="pantalla">
+        <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Avatar" />
+        <h3>+54 911 5793-8194</h3>
+    </div>
 
-  <!-- Chat -->
-  <div id="chat"></div>
+    <div id="chat"></div>
 
-  <!-- Input -->
-  <div class="input-container">
-    <textarea id="input" placeholder="Escribí tu respuesta..."></textarea>
-    <button class="escribir-btn" onclick="sendMessage()">Enviar</button>
-  </div>
+    <div class="input-container">
+        <textarea id="input" placeholder="Escribí tu respuesta..."></textarea>
+        <button class="escribir-btn" onclick="sendMessage()">Enviar</button>
+    </div>
 
-  <button class="correcciones-btn" onclick="window.location.href='correcciones.html'">
-    Correcciones
-  </button>
+    <button class="correcciones-btn" onclick="window.location.href='correcciones.html'">
+        Correcciones
+    </button>
 
-  <script>
-    const chatBox = document.getElementById("chat");
-    const input = document.getElementById("input");
+    <script>
+        const chatBox = document.getElementById("chat");
+        const input = document.getElementById("input");
+        const toScreen2Btn = document.getElementById('toScreen2Btn');
 
-    function addMessage(text, type) {
-      const div = document.createElement("div");
-      div.className = "msg " + type;
-      div.innerText = text;
-      chatBox.appendChild(div);
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }
+        if (toScreen2Btn) {
+            toScreen2Btn.addEventListener('click', () => {
+                window.location.href = 'Formulario2.html';
+            });
+        }
 
-    async function sendMessage() {
-      const text = input.value.trim();
-      if (!text) return;
+        function hablar(texto) {
+            const respuesta = new SpeechSynthesisUtterance(texto);
+            respuesta.lang = 'es-ES';
+            speechSynthesis.speak(respuesta);
+        }
 
-      addMessage(text, "user");
-      input.value = "";
+        function addMessage(text, type) {
+            const div = document.createElement("div");
+            div.className = "msg " + type;
+            div.innerText = text;
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
 
-      try {
-        const res = await fetch("http://localhost:5000/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: text })
+        async function sendMessage() {
+            const text = input.value.trim();
+            if (!text) return;
+
+            addMessage(text, "user");
+            input.value = "";
+
+            try {
+                const res = await fetch("http://localhost:5000/chat", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message: text })
+                });
+
+                const data = await res.json();
+                addMessage(data.reply, "bot");
+            } catch (err) {
+                addMessage("⚠️ Error de conexión con el servidor", "bot");
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            addMessage("¡Hola!", "bot");
         });
-
-        const data = await res.json();
-        addMessage(data.reply, "bot");
-      } catch (err) {
-        addMessage("⚠️ Error de conexión con el servidor", "bot");
-      }
-    }
-  </script>
+    </script>
 </body>
 </html>
