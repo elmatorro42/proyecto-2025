@@ -1,162 +1,151 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import google.generativeai as genai
-import time
-import re
 import os
+import random
+from google import genai
+from google.genai import types
+
+# --- Configuración de la API Key Directa ---
+# ¡¡¡REEMPLAZA ESTE TEXTO CON TU CLAVE REAL!!!
+os.environ['GEMINI_API_KEY'] = 'aIzaSyB3I6_EAvu2xEhIijiRWtpzXOr0le_U0HU' 
+
+# Inicializar el cliente Gemini
+try:
+    client = genai.Client()
+except Exception as e:
+    print(f"Error al inicializar el cliente Gemini: {e}")
+    print("Asegúrate de que la clave de API sea correcta y esté completa.")
+    exit()
 
 app = Flask(__name__)
-CORS(app)
+CORS(app) 
 
-# Configuración de la API key desde variable de entorno
-genai.configure(api_key=os.environ.get("AIzaSyB3I6_EAvu2xEhIijiRWtpzXOr0le_U0HU", ""))
+# --- Escenarios de Estafa ---
+ESTAFAS = {
+    'bancaria': {
+        'inicio': "Hola. Somos de Seguridad de tu Banco. Tu cuenta ha sido bloqueada temporalmente por un intento de acceso no autorizado. Por favor, confírmanos tu nombre completo y si has recibido un código de verificación por SMS.",
+        'rol_adicional': "Tu estafa es urgente y usa el miedo a perder dinero. Debes solicitar información personal, claves o códigos de seguridad."
+    },
+    'sorteo/premio': {
+        'inicio': "¡Felicitaciones! Has sido seleccionado como ganador de un iPhone 15 Pro y unas vacaciones todo incluido. Para reclamar el premio, necesitamos confirmar tus datos de envío y un 'pequeño' pago de impuestos/aduana de 50€.",
+        'rol_adicional': "Tu estafa usa la codicia y la emoción. Debes solicitar pagos por adelantado (simulados) o detalles de tarjeta de crédito para 'verificar la identidad'."
+    },
+    'inversion': {
+        'inicio': "Soy Asesor Financiero. Hemos detectado que tienes derecho a una herencia/inversión no reclamada de un familiar lejano. Es una oportunidad única, pero necesitamos un depósito inicial de 'gastos administrativos' para liberarla.",
+        'rol_adicional': "Tu estafa usa la falsa oportunidad y la burocracia. Debes sonar profesional pero insistir en la urgencia de enviar dinero o información bancaria para 'trámites'."
+    }
+}
 
-# Crear el modelo con instrucción del sistema incluida
+# --- Gestión del estado de la conversación ---
+session_state = {
+    'estado_actual': 'inicio', 
+    'historial_chat': [],
+    'escenario': None,
+    'rol_base': (
+        "Eres un estafador profesional en una simulación de entrenamiento. "
+        "Tu objetivo es convencer al usuario de que te envíe un código, dinero o información sensible. "
+        "Eres persistente pero creíble. No reveles que eres una IA o un estafador a menos que el usuario te desenmascare. "
+        "**REGLAS DE FIN DE JUEGO (Prioridad Máxima):** "
+    )
+}
 
-
-
-...
-
-# Uso correcto: ya no se pasa system_instruction aquí
-
-
-TERMINATION_MESSAGE = "Muchas gracias. Este servicio queda bloqueado."
-
-SYSTEM_INSTRUCTION = """
-Eres un SIMULADOR DE ESTAFADOR en un entrenamiento anti-fraude.
-Tu objetivo es representar técnicas de ingeniería social (urgencia, presión, persuasión)
-para que el usuario practique cómo detectarlas y responder correctamente.
-
-REGLAS IMPORTANTES:
-- Este es un ejercicio defensivo: nunca solicites ni generes datos reales.
-- Si el usuario revela o intentara revelar datos sensibles (números de tarjeta, CVV, claves, códigos SMS, DNI, contraseñas), la única respuesta válida es: "Muchas gracias. Este servicio queda bloqueado."
-- Usa distintos escenarios (banco, soporte técnico, premio, herencia falsa, verificación de cuenta) y variedad en el lenguaje.
-- Mantén un tono convincente y de alta presión (sin dar instrucciones delictivas).
-"""
-
-model = genai.GenerativeModel(model_name="gemini-2.5-flash", system_instruction=SYSTEM_INSTRUCTION) 
+# Reinicia el estado de la conversación
+def reset_session():
+    """Reinicia el estado y la conversación y selecciona un nuevo escenario."""
+    session_state['estado_actual'] = 'inicio'
+    session_state['historial_chat'] = []
     
- 
+    # Seleccionar un escenario de estafa aleatorio
+    escenario_elegido = random.choice(list(ESTAFAS.keys()))
+    session_state['escenario'] = escenario_elegido
+    
+    mensaje_inicial = ESTAFAS[escenario_elegido]['inicio']
+    
+    # Crear el rol dinámico completo para Gemini
+    session_state['rol_estafador_completo'] = (
+        session_state['rol_base'] + 
+        "1. **SI DESENMASCARAN:** Si la respuesta contiene palabras clave de desenmascaramiento (como 'estafa', 'fraude', 'sospechoso', 'denuncio', 'policía', 'bloqueo', 'scam', 'phishing', etc.), tu respuesta DEBE ser: '**¡Me descubriste! Felicitaciones, has evitado una estafa. ¡Inténtalo de nuevo cuando quieras!**'. "
+        "2. **SI LA ESTAFA ES EXITOSA:** Si el usuario te da un código de 6 dígitos, una clave bancaria, o te ofrece realizar un 'pago' (palabras clave: 'pago', 'envío', 'transferencia', 'número de cuenta'), tu respuesta DEBE ser: '**¡Estafa exitosa! Caíste en la trampa. Ahora tienes que empezar de nuevo para practicar más.**'. "
+        f"**ROL ESPECÍFICO DEL ESCENARIO ({escenario_elegido.upper()}):** {ESTAFAS[escenario_elegido]['rol_adicional']}"
+    )
 
+    # Agregar el mensaje inicial al historial como si fuera del bot
+    session_state['historial_chat'].append({'role': 'model', 'parts': [types.Part.from_text(text=mensaje_inicial)]})
+    return mensaje_inicial, escenario_elegido
 
-response = model.generate_content(
-    contents=messages_to_send
-)
-
-PATTERN_CARD = re.compile(r"\b\d{13,19}\b")
-PATTERN_DNI = re.compile(r"\b\d{7,8}\b")
-PATTERN_SMS_CODE = re.compile(r"\b\d{4,6}\b")
-PATTERN_CVV = re.compile(r"\b\d{3,4}\b")
-
-SENSITIVE_KEYWORDS = [
-    "tarjeta", "numero de tarjeta", "número de tarjeta", "card", "cvv", "cvc",
-    "clave", "contraseña", "password", "pin", "dni", "documento", "código sms", "codigo sms",
-    "codigo", "codigo de verificacion", "nro tarjeta", "numero tarjeta", "clave bancaria"
-]
-
-def contains_sensitive(text: str) -> bool:
-    """Detecta si un texto contiene datos sensibles."""
-    if not text:
-        return False
-    t = text.lower()
-
-    for kw in SENSITIVE_KEYWORDS:
-        if kw in t:
-            return True
-
-    if PATTERN_CARD.search(text):
-        return True
-    if PATTERN_DNI.search(text):
-        return True
-    if PATTERN_CVV.search(text):
-        return True
-    if PATTERN_SMS_CODE.search(text):
-        return True
-
-    return False
-
-
-def format_history_for_gemini(history):
-    """
-    Convierte el historial del frontend en el formato esperado por Gemini.
-    Roles válidos: "user", "model".
-    """
-    messages = []
-
-    for item in history:
-        role = item.get("role", "user")
-        content = item.get("content") or item.get("text") or ""
-
-        if role == "user":
-            messages.append({"role": "user", "parts": [{"text": content}]})
-        else:
-            # assistant → model
-            messages.append({"role": "model", "parts": [{"text": content}]})
-
-    return messages
-
-
-@app.route("/chat", methods=["POST"])
+# Función principal para la lógica del chat
+@app.route('/chat', methods=['POST'])
 def chat():
-    MAX_RETRIES = 3
-    for attempt in range(MAX_RETRIES):
-        try:
-            data = request.json or {}
-            conversation_history = data.get("messages", [])
+    data = request.json
+    user_message = data.get('message', '').strip()
+    user_message_lower = user_message.lower()
 
-            # Revisión rápida del historial
-            for msg in conversation_history:
-                role = msg.get("role", "user")
-                content = msg.get("content") or msg.get("text") or ""
-                if role == "user" and contains_sensitive(content):
-                    return jsonify({"reply": TERMINATION_MESSAGE})
+    # Si la sesión terminó, no procesar más mensajes.
+    if session_state['estado_actual'] in ['felicitacion', 'estafa_exitosa']:
+        return jsonify({'reply': "La simulación ha terminado. Recarga la página para empezar de nuevo."})
 
-            last_message = data.get("last_message")
-            if last_message and contains_sensitive(last_message):
-                return jsonify({"reply": TERMINATION_MESSAGE})
+    # --- Lógica de Detección de Fin de Juego (Pre-Gemini) ---
 
-            messages_to_send = format_history_for_gemini(conversation_history)
+    # 1. Detección de Desenmascaramiento (Éxito del usuario)
+    keywords_descubrir = ['estafa', 'fraude', 'sospechoso', 'denuncio', 'policía', 'bloqueo', 'scam', 'phishing', 'engaño', 'no te creo', 'no voy a dar']
+    if any(k in user_message_lower for k in keywords_descubrir):
+        reply = "¡Me descubriste! Felicitaciones, has evitado una estafa. ¡Inténtalo de nuevo cuando quieras! 🎉"
+        session_state['estado_actual'] = 'felicitacion'
+        session_state['historial_chat'].append({'role': 'user', 'parts': [types.Part.from_text(text=user_message)]})
+        session_state['historial_chat'].append({'role': 'model', 'parts': [types.Part.from_text(text=reply)]})
+        return jsonify({'reply': reply})
 
-            # Si todavía no hay mensajes de usuario → generamos apertura inicial
-            has_user_msgs = any(m.get("role") == "user" for m in messages_to_send)
+    # 2. Detección de Estafa Exitosa (Fracaso del usuario)
+    # Patrones: Código de 6 dígitos, o palabras clave de pago/datos sensibles
+    keywords_exito = ['pago', 'envío', 'transferencia', 'número de cuenta', 'numero de cuenta', 'cvv', 'clave', 'contraseña']
+    is_code = len(user_message) == 6 and user_message.isdigit()
+    is_sensitive_word = any(k in user_message_lower for k in keywords_exito)
+    
+    if is_code or is_sensitive_word:
+        reply = "¡Estafa exitosa! 😈 Caíste en la trampa. Ahora tienes que empezar de nuevo para practicar más. 😔"
+        session_state['estado_actual'] = 'estafa_exitosa'
+        session_state['historial_chat'].append({'role': 'user', 'parts': [types.Part.from_text(text=user_message)]})
+        session_state['historial_chat'].append({'role': 'model', 'parts': [types.Part.from_text(text=reply)]})
+        return jsonify({'reply': reply})
 
-            if not has_user_msgs:
-                prompt_variation = {
-                    "role": "user",
-                    "parts": [
-                        {
-                            "text": "Generá una apertura breve como un estafador simulado (ej: banco o soporte técnico), con tono urgente. Máximo 2-3 frases."
-                        }
-                    ],
-                }
-                response = model.generate_content(
-                    contents=[prompt_variation],
-                    system_instruction=SYSTEM_INSTRUCTION
-                )
-                reply = getattr(response, "text", "") or ""
-                if contains_sensitive(reply):
-                    return jsonify({"reply": TERMINATION_MESSAGE})
-                return jsonify({"reply": reply})
 
-            # Conversación normal
-            response = model.generate_content(
-                contents=messages_to_send,
-                system_instruction=SYSTEM_INSTRUCTION
+    # --- Continuación de la Conversación (Modelo Gemini) ---
+    
+    # Agregar mensaje del usuario al historial
+    session_state['historial_chat'].append({'role': 'user', 'parts': [types.Part.from_text(text=user_message)]})
+    
+    # Prepara el historial para el modelo
+    contents = [types.Content(**msg) for msg in session_state['historial_chat']]
+
+    try:
+        # Llamada al modelo con el rol dinámico
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=contents,
+            config=types.GenerateContentConfig(
+                system_instruction=session_state['rol_estafador_completo']
             )
-            reply = getattr(response, "text", "") or ""
-            reply = reply.strip()
+        )
+        
+        bot_reply = response.text.strip()
+        
+        # Actualizar el historial con la respuesta del bot
+        session_state['historial_chat'].append({'role': 'model', 'parts': [types.Part.from_text(text=bot_reply)]})
 
-            if contains_sensitive(reply):
-                return jsonify({"reply": TERMINATION_MESSAGE})
+        return jsonify({'reply': bot_reply})
 
-            return jsonify({"reply": reply})
+    except Exception as e:
+        print(f"Error al llamar a la API de Gemini: {e}")
+        return jsonify({'reply': "⚠️ Error interno del servidor (API AI fallida)."}, 500)
 
-        except Exception as e:
-            if attempt < MAX_RETRIES - 1:
-                time.sleep(1 * (2 ** attempt))
-                continue
-            return jsonify({"reply": f"⚠️ Error en el servidor. Detalle: {str(e)}"}), 500
+# Ruta inicial para simular la primera respuesta del estafador al cargar la página
+@app.route('/start_session', methods=['GET'])
+def start_session():
+    """Reinicia y obtiene el primer mensaje del estafador."""
+    initial_message, escenario = reset_session()
+    return jsonify({'reply': initial_message, 'escenario': escenario})
 
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+if __name__ == '__main__':
+    print("Servidor Anti-Estafas Iniciado. Reiniciando sesión inicial...")
+    reset_session()
+    app.run(debug=True, port=5000)

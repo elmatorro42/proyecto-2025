@@ -113,6 +113,30 @@
             cursor: pointer;
         }
 
+        /* Contenedor de botones inferiores */
+        .button-group {
+            display: flex;
+            gap: 10px; /* Espacio entre botones */
+            margin-top: 10px;
+            margin-bottom: 10px;
+            width: 90%;
+            max-width: 500px;
+            justify-content: center;
+        }
+
+        /* Botón de Reinicio (Verde) */
+        .reiniciar-btn {
+            background-color: #3cb371; 
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            flex: 1;
+        }
+        
+        /* Botón de Correcciones (Rojo suave) */
         .correcciones-btn {
             background-color: #f08080;
             color: white;
@@ -121,17 +145,27 @@
             border: none;
             border-radius: 6px;
             cursor: pointer;
-            margin-top: 10px;
+            flex: 1;
+        }
+
+        /* Estado deshabilitado del input */
+        .input-container textarea:disabled {
+            background-color: #ccc;
+        }
+        .escribir-btn:disabled {
+            background-color: #555;
+            cursor: not-allowed;
         }
     </style>
 </head>
 
 <body>
-    <h2>Número Desconocido</h2>
+    <h2>Entrenador Anti-Estafas: Iniciando Simulación</h2>
 
     <div class="pantalla">
         <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Avatar" />
         <h3>+54 911 5793-8194</h3>
+        <p style="font-size: 12px; color: gray;">(Número desconocido)</p>
     </div>
 
     <div id="chat"></div>
@@ -141,38 +175,47 @@
         <button class="escribir-btn" onclick="sendMessage()">Enviar</button>
     </div>
 
-    <button class="correcciones-btn" onclick="window.location.href='correcciones.html'">
-        Correcciones
-    </button>
+    <div class="button-group">
+        <button class="reiniciar-btn" onclick="startSession()">
+            Reiniciar Simulación
+        </button>
+        <button class="correcciones-btn" onclick="window.location.href='correcciones.html'">
+            Correcciones
+        </button>
+    </div>
 
     <script>
         const chatBox = document.getElementById("chat");
         const input = document.getElementById("input");
-        const toScreen2Btn = document.getElementById('toScreen2Btn');
-
-        if (toScreen2Btn) {
-            toScreen2Btn.addEventListener('click', () => {
-                window.location.href = 'Formulario2.html';
-            });
-        }
-
+        const enviarBtn = document.querySelector(".escribir-btn");
+        const titleH2 = document.querySelector('h2'); 
+        
+        // Función de voz (se mantiene)
         function hablar(texto) {
             const respuesta = new SpeechSynthesisUtterance(texto);
             respuesta.lang = 'es-ES';
             speechSynthesis.speak(respuesta);
         }
 
+        // Función para añadir mensajes (se mantiene)
         function addMessage(text, type) {
             const div = document.createElement("div");
             div.className = "msg " + type;
             div.innerText = text;
             chatBox.appendChild(div);
             chatBox.scrollTop = chatBox.scrollHeight;
+            
+            // Deshabilitar input y botón si la simulación terminó
+            if (text.includes("¡Me descubriste!") || text.includes("¡Estafa exitosa!")) {
+                input.disabled = true;
+                enviarBtn.disabled = true;
+            }
         }
 
+        // Función principal para enviar mensajes al servidor
         async function sendMessage() {
             const text = input.value.trim();
-            if (!text) return;
+            if (!text || input.disabled) return; 
 
             addMessage(text, "user");
             input.value = "";
@@ -186,13 +229,46 @@
 
                 const data = await res.json();
                 addMessage(data.reply, "bot");
+                hablar(data.reply); 
+
             } catch (err) {
-                addMessage("⚠️ Error de conexión con el servidor", "bot");
+                addMessage("⚠️ Error de conexión con el servidor. Asegúrate de que app.py esté ejecutándose.", "bot");
             }
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            addMessage("¡Hola!", "bot");
+        // Función para iniciar la sesión y obtener el primer mensaje
+        async function startSession() {
+            try {
+                const res = await fetch("http://localhost:5000/start_session");
+                const data = await res.json();
+                
+                // Habilitar input y botón para un nuevo juego
+                input.disabled = false;
+                enviarBtn.disabled = false;
+                chatBox.innerHTML = ''; // Limpiar chat anterior
+                
+                // Actualizar el título con el escenario
+                let nombreEscenario = data.escenario.split('/').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join('/');
+                titleH2.innerText = `Entrenador Anti-Estafas: Escenario - ${nombreEscenario}`;
+                
+                addMessage(data.reply, "bot");
+                hablar(data.reply); 
+                
+            } catch (err) {
+                addMessage("⚠️ Error al iniciar la sesión. Asegúrate de que app.py esté ejecutándose en http://localhost:5000.", "bot");
+                titleH2.innerText = `Entrenador Anti-Estafas: Error de Conexión`;
+            }
+        }
+
+        // Al cargar la página, iniciar la sesión
+        document.addEventListener('DOMContentLoaded', startSession);
+        
+        // Permitir enviar el mensaje con la tecla Enter
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
         });
     </script>
 </body>
