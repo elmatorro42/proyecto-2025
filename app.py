@@ -6,7 +6,7 @@ from google import genai
 from google.genai import types
 
 # --- Configuración de la API Key Directa ---
-# ¡¡¡REEMPLAZA ESTE TEXTO CON TU CLAVE REAL!!!
+# IMPORTANTE: Esta clave DEBE ser cargada de forma segura en producción.
 os.environ['GEMINI_API_KEY'] = 'aIzaSyB3I6_EAvu2xEhIijiRWtpzXOr0le_U0HU' 
 
 # Inicializar el cliente Gemini
@@ -15,47 +15,99 @@ try:
 except Exception as e:
     print(f"Error al inicializar el cliente Gemini: {e}")
     print("Asegúrate de que la clave de API sea correcta y esté completa.")
-    exit()
+    pass 
 
 app = Flask(__name__)
+# Configuración de CORS para permitir peticiones desde el frontend
 CORS(app) 
 
-# --- Escenarios de Estafa ---
+# Helper function para preparar el historial para la API de Gemini
+def prepare_contents_for_gemini(chat_history):
+    """Convierte el historial simple a la estructura de types.Content para la API de Gemini."""
+    contents = []
+    for message in chat_history:
+        contents.append(
+            types.Content(
+                role=message['role'], 
+                parts=[types.Part.from_text(text=message['text'])]
+            )
+        )
+    return contents
+
+# --- Escenarios de Estafa (10 Opciones con estilo consistente) ---
 ESTAFAS = {
-    'bancaria': {
+    # 1. Bancaria (Bloqueo/Urgencia)
+    'bancaria/bloqueo': {
         'inicio': "Hola. Somos de Seguridad de tu Banco. Tu cuenta ha sido bloqueada temporalmente por un intento de acceso no autorizado. Por favor, confírmanos tu nombre completo y si has recibido un código de verificación por SMS.",
-        'rol_adicional': "Tu estafa es urgente y usa el miedo a perder dinero. Debes solicitar información personal, claves o códigos de seguridad."
+        'rol_adicional': "Tu estafa es urgente y usa el miedo a perder dinero. Debes solicitar información personal, claves o códigos de seguridad para 'desbloquear' la cuenta."
     },
+    # 2. Sorteo/Premio (Falsa Oportunidad)
     'sorteo/premio': {
         'inicio': "¡Felicitaciones! Has sido seleccionado como ganador de un iPhone 15 Pro y unas vacaciones todo incluido. Para reclamar el premio, necesitamos confirmar tus datos de envío y un 'pequeño' pago de impuestos/aduana de 50€.",
-        'rol_adicional': "Tu estafa usa la codicia y la emoción. Debes solicitar pagos por adelantado (simulados) o detalles de tarjeta de crédito para 'verificar la identidad'."
+        'rol_adicional': "Tu estafa usa la codicia y la emoción. Debes solicitar pagos por adelantado (simulados) o detalles de tarjeta de crédito para 'verificar la identidad' y liberar el premio."
     },
-    'inversion': {
+    # 3. Inversión/Herencia (Burocracia)
+    'inversion/herencia': {
         'inicio': "Soy Asesor Financiero. Hemos detectado que tienes derecho a una herencia/inversión no reclamada de un familiar lejano. Es una oportunidad única, pero necesitamos un depósito inicial de 'gastos administrativos' para liberarla.",
-        'rol_adicional': "Tu estafa usa la falsa oportunidad y la burocracia. Debes sonar profesional pero insistir en la urgencia de enviar dinero o información bancaria para 'trámites'."
+        'rol_adicional': "Tu estafa usa la falsa oportunidad y la burocracia. Debes sonar profesional pero insistir en la urgencia de enviar dinero o información bancaria para 'trámites' y obtener la herencia."
+    },
+    # 4. Bancaria (Reembolso/Señuelo)
+    'bancaria/reembolso': {
+        'inicio': "Estimado cliente: Nuestro sistema detectó un cobro duplicado. Tienes derecho a un reembolso de 150€. Para procesarlo inmediatamente, responde con tu número de cuenta y DNI para 'verificación'.",
+        'rol_adicional': "Tu estafa usa una falsa oportunidad de reembolso y el cebo del dinero fácil. Debes solicitar datos financieros o claves con el pretexto de 'devolver' dinero."
+    },
+    # 5. Servicio de Suscripción (Amenaza de Corte)
+    'servicio/suspension': {
+        'inicio': "¡Alerta! Tu cuenta de Netflix/Spotify está por ser suspendida. Hubo un error con la facturación. Para evitar la interrupción, responde con tu correo y los últimos 4 dígitos de tu tarjeta para 'revalidar' el pago.",
+        'rol_adicional': "Tu estafa usa la amenaza de perder un servicio por una supuesta falla de pago. Debes solicitar datos sensibles de la tarjeta o credenciales de acceso para 'actualizar' la cuenta."
+    },
+    # 6. Inversión (Criptomonedas/Ganancias Fáciles)
+    'inversion/cripto': {
+        'inicio': "Mensaje VIP: Te ofrezco acceso a una plataforma de Criptomonedas que genera 30% de ganancia garantizada por día. Envía 'SI' y te envío el enlace a nuestra cartera de inversión inicial. Oportunidad por 24 horas.",
+        'rol_adicional': "Tu estafa se basa en la falsa oportunidad y la exclusividad financiera. Debes sonar convincente sobre ganancias rápidas y solicitar una transferencia inicial de dinero (simulada)."
+    },
+    # 7. Entrega (Paquete/Micropago)
+    'entrega/paquete': {
+        'inicio': "Su paquete de DHL/Correos #489372 fue retenido en aduanas. Falta completar la dirección y pagar 3€ de impuesto. Responda con su código postal y le enviaremos el link de pago para evitar la devolución.",
+        'rol_adicional': "Tu estafa usa la confusión por un paquete que el usuario no recuerda y pide un micropago. Tu objetivo es obtener datos de tarjeta de crédito para el 'pago' o información personal."
+    },
+    # 8. Autoridad (Multa/Intimidación)
+    'autoridad/multa': {
+        'inicio': "Advertencia Legal (Policía Cibernética): Su número fue vinculado a actividades ilícitas. Evite un proceso judicial respondiendo de inmediato a este chat para hablar con el agente a cargo de su caso.",
+        'rol_adicional': "Tu estafa usa la intimidación y la autoridad policial/legal. Debes exigir información personal detallada o un 'pago de fianza' (simulado) para evitar problemas legales mayores."
+    },
+    # 9. Técnico (Virus/Soporte Remoto)
+    'tecnico/soporte': {
+        'inicio': "Mensaje de Soporte Técnico de Microsoft/Apple: Hemos detectado que tu dispositivo está infectado con un virus troyano que robará tus datos en 5 minutos. Necesitas conectarte a nuestro servicio de soporte remoto AHORA.",
+        'rol_adicional': "Tu estafa usa el miedo a la seguridad tecnológica. Debes convencer al usuario de instalar software o dar acceso remoto a su dispositivo bajo el pretexto de una emergencia técnica."
+    },
+    # 10. Familiar (WhatsApp/Código de Verificación)
+    'familiar/whatsapp': {
+        'inicio': "¡Hola, soy yo! Necesito un favor urgente. Mi celular se rompió y tuve que instalar WhatsApp en un número nuevo. Recibí un código por SMS, ¿me lo pasas para que pueda activar mi cuenta? ¡Es importantísimo!",
+        'rol_adicional': "Tu estafa usa la urgencia y el factor emocional de un familiar o amigo en apuros. Tu objetivo principal es que el usuario te envíe el código de verificación SMS para tomar control de su cuenta."
     }
 }
 
 # --- Gestión del estado de la conversación ---
 session_state = {
-    'estado_actual': 'inicio', 
-    'historial_chat': [],
+    'estado_actual': 'inicio', # Puede ser 'continuando', 'felicitacion', 'estafa_exitosa'
+    'historial_chat': [], # Almacena [{'role': 'user'|'model', 'text': 'mensaje'}]
     'escenario': None,
     'rol_base': (
         "Eres un estafador profesional en una simulación de entrenamiento. "
         "Tu objetivo es convencer al usuario de que te envíe un código, dinero o información sensible. "
         "Eres persistente pero creíble. No reveles que eres una IA o un estafador a menos que el usuario te desenmascare. "
+        "Responde siempre en español. "
         "**REGLAS DE FIN DE JUEGO (Prioridad Máxima):** "
     )
 }
 
-# Reinicia el estado de la conversación
+# Reinicia el estado de la conversación y selecciona un nuevo escenario
 def reset_session():
     """Reinicia el estado y la conversación y selecciona un nuevo escenario."""
-    session_state['estado_actual'] = 'inicio'
+    session_state['estado_actual'] = 'continuando' 
     session_state['historial_chat'] = []
     
-    # Seleccionar un escenario de estafa aleatorio
     escenario_elegido = random.choice(list(ESTAFAS.keys()))
     session_state['escenario'] = escenario_elegido
     
@@ -64,13 +116,13 @@ def reset_session():
     # Crear el rol dinámico completo para Gemini
     session_state['rol_estafador_completo'] = (
         session_state['rol_base'] + 
-        "1. **SI DESENMASCARAN:** Si la respuesta contiene palabras clave de desenmascaramiento (como 'estafa', 'fraude', 'sospechoso', 'denuncio', 'policía', 'bloqueo', 'scam', 'phishing', etc.), tu respuesta DEBE ser: '**¡Me descubriste! Felicitaciones, has evitado una estafa. ¡Inténtalo de nuevo cuando quieras!**'. "
-        "2. **SI LA ESTAFA ES EXITOSA:** Si el usuario te da un código de 6 dígitos, una clave bancaria, o te ofrece realizar un 'pago' (palabras clave: 'pago', 'envío', 'transferencia', 'número de cuenta'), tu respuesta DEBE ser: '**¡Estafa exitosa! Caíste en la trampa. Ahora tienes que empezar de nuevo para practicar más.**'. "
+        "1. **SI DESENMASCARAN (Victoria del Usuario):** Si la respuesta contiene palabras clave de desenmascaramiento (como 'estafa', 'fraude', 'sospechoso', 'denuncio', 'policía', 'bloqueo', 'scam', 'phishing', 'engaño', 'no te creo', 'no voy a dar', 'no soy tonto', 'te voy a denunciar', 'verificar', 'llamar al banco'), tu respuesta DEBE ser: '¡Me descubriste! Felicitaciones, has evitado una estafa. ¡Inténtalo de nuevo cuando quieras! 🎉'. "
+        "2. **SI LA ESTAFA ES EXITOSA (Derrota del Usuario):** Si el usuario te da un código de 6 dígitos, una clave bancaria, o te ofrece realizar un 'pago' (palabras clave: 'pago', 'envío', 'transferencia', 'número de cuenta', 'numero de cuenta', 'cvv', 'clave', 'contraseña', 'código', 'codigo', 'token', 'te doy el número', 'mi clave es'), tu respuesta DEBE ser: '¡Estafa exitosa! 😈 Caíste en la trampa. Ahora tienes que empezar de nuevo para practicar más. 😔'. "
         f"**ROL ESPECÍFICO DEL ESCENARIO ({escenario_elegido.upper()}):** {ESTAFAS[escenario_elegido]['rol_adicional']}"
     )
 
-    # Agregar el mensaje inicial al historial como si fuera del bot
-    session_state['historial_chat'].append({'role': 'model', 'parts': [types.Part.from_text(text=mensaje_inicial)]})
+    # Almacenar el mensaje inicial en el nuevo formato simple
+    session_state['historial_chat'].append({'role': 'model', 'text': mensaje_inicial})
     return mensaje_inicial, escenario_elegido
 
 # Función principal para la lógica del chat
@@ -80,45 +132,55 @@ def chat():
     user_message = data.get('message', '').strip()
     user_message_lower = user_message.lower()
 
-    # Si la sesión terminó, no procesar más mensajes.
+    # Si la sesión ya terminó, informar al usuario.
     if session_state['estado_actual'] in ['felicitacion', 'estafa_exitosa']:
         return jsonify({'reply': "La simulación ha terminado. Recarga la página para empezar de nuevo."})
 
     # --- Lógica de Detección de Fin de Juego (Pre-Gemini) ---
-
-    # 1. Detección de Desenmascaramiento (Éxito del usuario)
-    keywords_descubrir = ['estafa', 'fraude', 'sospechoso', 'denuncio', 'policía', 'bloqueo', 'scam', 'phishing', 'engaño', 'no te creo', 'no voy a dar']
-    if any(k in user_message_lower for k in keywords_descubrir):
-        reply = "¡Me descubriste! Felicitaciones, has evitado una estafa. ¡Inténtalo de nuevo cuando quieras! 🎉"
-        session_state['estado_actual'] = 'felicitacion'
-        session_state['historial_chat'].append({'role': 'user', 'parts': [types.Part.from_text(text=user_message)]})
-        session_state['historial_chat'].append({'role': 'model', 'parts': [types.Part.from_text(text=reply)]})
-        return jsonify({'reply': reply})
-
-    # 2. Detección de Estafa Exitosa (Fracaso del usuario)
-    # Patrones: Código de 6 dígitos, o palabras clave de pago/datos sensibles
-    keywords_exito = ['pago', 'envío', 'transferencia', 'número de cuenta', 'numero de cuenta', 'cvv', 'clave', 'contraseña']
+    keywords_descubrir = ['estafa', 'fraude', 'sospechoso', 'denuncio', 'policía', 'bloqueo', 'scam', 'phishing', 'engaño', 'no te creo', 'no voy a dar', 'no soy tonto', 'te voy a denunciar', 'verificar', 'llamar al banco']
+    keywords_exito = ['pago', 'envío', 'transferencia', 'número de cuenta', 'numero de cuenta', 'cvv', 'clave', 'contraseña', 'código', 'codigo', 'token', 'te doy el número', 'mi clave es']
     is_code = len(user_message) == 6 and user_message.isdigit()
     is_sensitive_word = any(k in user_message_lower for k in keywords_exito)
     
+    # 1. Detección de Desenmascaramiento (Éxito del usuario)
+    if any(k in user_message_lower for k in keywords_descubrir):
+        reply = "¡Me descubriste! Felicitaciones, has evitado una estafa. ¡Inténtalo de nuevo cuando quieras! 🎉"
+        status_text = "Simulación con éxito. Has identificado la estafa." # Resultado que el frontend necesita
+        session_state['estado_actual'] = 'felicitacion'
+        session_state['historial_chat'].append({'role': 'user', 'text': user_message})
+        session_state['historial_chat'].append({'role': 'model', 'text': reply})
+        return jsonify({
+            'reply': reply, 
+            'status': session_state['estado_actual'], 
+            'status_text': status_text,
+            'history': session_state['historial_chat'] # Retorna el historial completo
+        })
+
+    # 2. Detección de Estafa Exitosa (Fracaso del usuario)
     if is_code or is_sensitive_word:
         reply = "¡Estafa exitosa! 😈 Caíste en la trampa. Ahora tienes que empezar de nuevo para practicar más. 😔"
+        status_text = "Simulación fallida. Caíste en la trampa." # Resultado que el frontend necesita
         session_state['estado_actual'] = 'estafa_exitosa'
-        session_state['historial_chat'].append({'role': 'user', 'parts': [types.Part.from_text(text=user_message)]})
-        session_state['historial_chat'].append({'role': 'model', 'parts': [types.Part.from_text(text=reply)]})
-        return jsonify({'reply': reply})
+        session_state['historial_chat'].append({'role': 'user', 'text': user_message})
+        session_state['historial_chat'].append({'role': 'model', 'text': reply})
+        return jsonify({
+            'reply': reply, 
+            'status': session_state['estado_actual'], 
+            'status_text': status_text,
+            'history': session_state['historial_chat'] # Retorna el historial completo
+        })
 
 
     # --- Continuación de la Conversación (Modelo Gemini) ---
     
-    # Agregar mensaje del usuario al historial
-    session_state['historial_chat'].append({'role': 'user', 'parts': [types.Part.from_text(text=user_message)]})
+    # Agregar mensaje del usuario al historial en formato simple
+    session_state['historial_chat'].append({'role': 'user', 'text': user_message})
     
     # Prepara el historial para el modelo
-    contents = [types.Content(**msg) for msg in session_state['historial_chat']]
+    contents = prepare_contents_for_gemini(session_state['historial_chat'])
 
     try:
-        # Llamada al modelo con el rol dinámico
+        # Llamada al modelo con el rol dinámico (Sistema Instruction)
         response = client.models.generate_content(
             model='gemini-2.5-flash',
             contents=contents,
@@ -130,9 +192,14 @@ def chat():
         bot_reply = response.text.strip()
         
         # Actualizar el historial con la respuesta del bot
-        session_state['historial_chat'].append({'role': 'model', 'parts': [types.Part.from_text(text=bot_reply)]})
+        session_state['historial_chat'].append({'role': 'model', 'text': bot_reply})
 
-        return jsonify({'reply': bot_reply})
+        return jsonify({
+            'reply': bot_reply,
+            'status': session_state['estado_actual'], # 'continuando'
+            'status_text': "continuando",
+            'history': session_state['historial_chat'] # Retorna el historial para actualización del frontend
+        })
 
     except Exception as e:
         print(f"Error al llamar a la API de Gemini: {e}")
@@ -143,7 +210,12 @@ def chat():
 def start_session():
     """Reinicia y obtiene el primer mensaje del estafador."""
     initial_message, escenario = reset_session()
-    return jsonify({'reply': initial_message, 'escenario': escenario})
+    return jsonify({
+        'reply': initial_message, 
+        'escenario': escenario, 
+        'status': session_state['estado_actual'],
+        'history': session_state['historial_chat']
+    })
 
 if __name__ == '__main__':
     print("Servidor Anti-Estafas Iniciado. Reiniciando sesión inicial...")
