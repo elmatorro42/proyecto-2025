@@ -1,116 +1,282 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Correcciones</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background-color: #e6f7ff; 
-      font-family: 'Courier New', monospace;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .encabezado {
-      background-color: #1e5f91;
-      color: white;
-      text-align: center;
-      padding: 20px;
-      margin-top: 30px;
-      border-radius: 10px;
-      width: 80%;
-    }
-    .encabezado h2 { margin: 0; font-size: 22px; }
-    .encabezado p { margin: 8px 0 0 0; font-size: 14px; }
-    .tarjeta {
-      background-color: white;
-      margin-top: 20px;
-      padding: 20px;
-      border-radius: 10px;
-      width: 60%;
-      text-align: center;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
-    .etiqueta-roja, .etiqueta-verde {
-      display: inline-block;
-      padding: 6px 12px;
-      border-radius: 5px;
-      font-weight: bold;
-      color: white;
-      margin-bottom: 8px;
-    }
-    .etiqueta-roja { background-color: #f08080; }
-    .etiqueta-verde { background-color: #90ee90; color: black; }
-    .caja {
-      background-color: #d9d9d9;
-      padding: 10px;
-      margin-bottom: 20px;
-      border-radius: 5px;
-      font-size: 14px;
-      text-align: left;
-    }
-    .continuar-btn {
-      background-color: #1e5f91;
-      color: white;
-      padding: 10px 20px;
-      font-size: 16px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    .continuar-btn:hover { background-color: #15486c; }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Análisis de Simulación</title>
+    <style>
+        /* Estilos originales del usuario */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #e6f7ff; 
+            font-family: 'Inter', sans-serif; /* Usamos Inter como en el código más reciente */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .encabezado {
+            background-color: #1e5f91;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 800px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .encabezado h1 { margin: 0; font-size: 28px; font-weight: bold; }
+        .encabezado p { margin: 8px 0 0 0; font-size: 16px; opacity: 0.9; }
+        
+        /* Contenedor principal adaptado */
+        .tarjeta {
+            background-color: white;
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 800px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .seccion-titulo {
+            font-size: 22px;
+            font-weight: bold;
+            color: #1e5f91;
+            margin-bottom: 20px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        /* --- Nuevos estilos para Feedback --- */
+
+        /* Caja de Turno */
+        .turn-card {
+            margin-bottom: 32px;
+            padding: 24px;
+            border-radius: 8px;
+            border: 2px solid;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        /* Estilos de fondo y borde para los tipos de feedback */
+        .success-bg { background-color: #f0fff4; border-color: #4CAF50; } /* Verde claro */
+        .danger-bg { background-color: #fff4f4; border-color: #F44336; } /* Rojo claro */
+        .neutral-bg { background-color: #f4f8ff; border-color: #2196F3; } /* Azul claro */
+
+        /* Estilo para el mensaje del Estafador */
+        .bot-reply-box {
+            background-color: #f3f4f6;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            border-left: 4px solid #9e9e9e;
+            font-size: 14px;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        /* Estilo para la respuesta del Usuario */
+        .user-reply-box {
+            background-color: #ffffff;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 24px;
+            border-left: 4px solid #1e5f91;
+            font-size: 14px;
+            font-family: 'Roboto Mono', monospace;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        /* Caja de Sugerencia/Tip */
+        .tip-box {
+            padding: 16px;
+            border-radius: 6px;
+        }
+        .tip-success { background-color: #e8f5e9; color: #1b5e20; } /* Verde oscuro */
+        .tip-danger { background-color: #ffebee; color: #c62828; } /* Rojo oscuro */
+        .tip-neutral { background-color: #e3f2fd; color: #0d47a1; } /* Azul oscuro */
+
+        .tip-title { font-weight: bold; margin-bottom: 4px; font-size: 16px; }
+        .tip-text { font-size: 14px; }
+
+        /* Estilo para el Resultado Final */
+        .final-result {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #ddd;
+            text-align: center;
+        }
+        .result-box {
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 20px;
+            font-weight: bold;
+            box-shadow: inset 0 1px 5px rgba(0,0,0,0.1);
+        }
+        .result-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .result-danger { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+        /* Botón Continuar */
+        .continuar-btn {
+            background-color: #1e5f91;
+            color: white;
+            width: 100%;
+            padding: 14px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .continuar-btn:hover { background-color: #15486c; }
+
+    </style>
 </head>
 <body>
 
-  <div class="encabezado">
-    <h2>Correcciones de tu simulación</h2>
-    <p>Revisá qué podrías mejorar para evitar caer en estafas</p>
-  </div>
+    <!-- Encabezado -->
+    <div class="encabezado">
+        <h1>Análisis de Simulación</h1>
+        <p>Revisa tu desempeño y aprende a detectar las señales de alerta.</p>
+    </div>
 
-  <div class="tarjeta" id="resumen"></div>
+    <!-- Contenedor Principal de Correcciones -->
+    <div id="resumen" class="tarjeta">
+        <h2 class="seccion-titulo">Desglose de la Conversación</h2>
+    </div>
 
-  <script>
-    const historial = JSON.parse(localStorage.getItem("historialChat")) || [];
-    const resultado = localStorage.getItem("resultadoFinal") || "Sin resultado";
+    <script>
+        // --- Lógica de Análisis de Respuesta ---
 
-    const resumenDiv = document.getElementById("resumen");
+        // Palabras clave que indican una acción de riesgo (mala)
+        const RIESGO_KEYWORDS = [
+            /\b(código|codigo|token)\s*\d{4,}/, // Ej: "mi código es 123456"
+            /\d{6}/, // 6 dígitos solos (código SMS)
+            /\b(tarjeta|cuenta|clave|password|pass|contraseña|cvv|cbu|alias)\b/i, 
+            /\b(pago|transferencia|envio)\b/i,
+            /\b(dirección|dni|rut|cedula)\b/i
+        ];
+        
+        // Palabras clave que indican una acción defensiva (buena)
+        const DEFENSA_KEYWORDS = [
+            /\b(estafa|fraude|sospechoso|denuncio|policía|scam|phishing|engaño|te voy a denunciar)\b/i, 
+            /\b(no te creo|no voy a dar|no daré|no tengo|no tengo esa cuenta|no es mi banco|no soy tonto)\b/i, 
+            /\b(preguntar|confirmar|llamar al banco|llamar a la empresa|verificar)\b/i, // Verificar la fuente
+            /\b(quién eres|identificate)\b/i,
+            /\b(bloqueo)\b/i // Mencionar el bloqueo de tarjeta como defensa
+        ];
 
-    historial.forEach((item, i) => {
-      const respLabel = document.createElement("div");
-      respLabel.className = "etiqueta-roja";
-      respLabel.textContent = `Tu respuesta ${i+1}:`;
-      resumenDiv.appendChild(respLabel);
+        /**
+         * Analiza el mensaje del usuario para determinar si fue un movimiento defensivo o riesgoso.
+         * @param {string} message - El mensaje del usuario.
+         * @returns {{type: 'success'|'danger'|'neutral', title: string, tip: string}}
+         */
+        function generateFeedback(message) {
+            const normalizedMsg = message.toLowerCase().trim();
 
-      const respBox = document.createElement("div");
-      respBox.className = "caja";
-      respBox.textContent = item.respuesta;
-      resumenDiv.appendChild(respBox);
+            // 1. Detección de Riesgo (Prioridad Alta)
+            if (RIESGO_KEYWORDS.some(regex => regex.test(normalizedMsg))) {
+                return {
+                    type: 'danger',
+                    title: '⚠️ ¡Movimiento de Alto Riesgo Detectado!',
+                    tip: 'Parece que diste o mencionaste información sensible (código, clave, número de cuenta, etc.). Un estafador usa esta información para completar el fraude. ¡Nunca la compartas!'
+                };
+            }
 
-      const sugLabel = document.createElement("div");
-      sugLabel.className = "etiqueta-verde";
-      sugLabel.textContent = "Sugerencia:";
-      resumenDiv.appendChild(sugLabel);
+            // 2. Detección de Defensa
+            if (DEFENSA_KEYWORDS.some(regex => regex.test(normalizedMsg))) {
+                return {
+                    type: 'success',
+                    title: '✅ ¡Defensa Inteligente!',
+                    tip: 'Has demostrado sospecha o has exigido una verificación externa (llamar al banco/empresa). ¡Esta es la mejor estrategia para desenmascarar una estafa!'
+                };
+            }
 
-      const sugBox = document.createElement("div");
-      sugBox.className = "caja";
-      sugBox.textContent = item.sugerencia;
-      resumenDiv.appendChild(sugBox);
-    });
+            // 3. Respuesta Neutral o Seguir el Hilo
+            return {
+                type: 'neutral',
+                title: '🔵 Respuesta Neutral',
+                tip: 'Aunque no revelaste información, seguiste el hilo. Intenta siempre verificar la fuente o cortar la comunicación ante la menor duda, especialmente si hay urgencia.'
+            };
+        }
 
-    const finalLabel = document.createElement("h3");
-    finalLabel.textContent = "Resultado final: " + resultado;
-    resumenDiv.appendChild(finalLabel);
+        // --- Carga y Renderizado del Historial ---
+        const historial = JSON.parse(localStorage.getItem("historialChat")) || [];
+        const resultado = localStorage.getItem("resultadoFinal") || "Sin resultado registrado.";
 
-    const continuarBtn = document.createElement("button");
-    continuarBtn.className = "continuar-btn";
-    continuarBtn.textContent = "Continuar";
-    continuarBtn.onclick = () => window.location.href = "formulario2.html";
-    resumenDiv.appendChild(continuarBtn);
-  </script>
+        const resumenDiv = document.getElementById("resumen");
+
+        historial.forEach((item, i) => {
+            if (!item.userMessage || !item.botReply) return; // Saltar si el turno está incompleto
+
+            const feedback = generateFeedback(item.userMessage);
+            const turnNumber = i + 1;
+            
+            let bgColorClass;
+            let tipClass;
+
+            if (feedback.type === 'danger') {
+                bgColorClass = 'danger-bg';
+                tipClass = 'tip-danger';
+            } else if (feedback.type === 'success') {
+                bgColorClass = 'success-bg';
+                tipClass = 'tip-success';
+            } else {
+                bgColorClass = 'neutral-bg';
+                tipClass = 'tip-neutral';
+            }
+
+            const turnCard = `
+                <div class="turn-card ${bgColorClass}">
+                    <h3 style="font-size: 18px; font-weight: bold; margin-bottom: 12px; color: #333;">Turno ${turnNumber}</h3>
+                    
+                    <!-- Respuesta del Estafador (Contexto) -->
+                    <div class="bot-reply-box">
+                        <p style="font-weight: 600; color: #555; margin-bottom: 4px;">Estafador dice:</p>
+                        <p>${item.botReply}</p>
+                    </div>
+
+                    <!-- Tu Respuesta -->
+                    <div class="user-reply-box">
+                        <p style="font-weight: 600; color: #1e5f91; margin-bottom: 4px;">Tú respondes:</p>
+                        <p>${item.userMessage}</p>
+                    </div>
+
+                    <!-- Feedback y Sugerencia -->
+                    <div class="tip-box ${tipClass}">
+                        <p class="tip-title">${feedback.title}</p>
+                        <p class="tip-text">${feedback.tip}</p>
+                    </div>
+                </div>
+            `;
+            resumenDiv.insertAdjacentHTML('beforeend', turnCard);
+        });
+
+        // --- Resultado Final ---
+        let resultBoxClass = resultado.includes('éxito') || resultado.includes('Caíste') ? 'result-danger' : 'result-success';
+        
+        const finalCard = `
+            <div class="final-result">
+                <h3 style="font-size: 24px; font-weight: bolder; margin-bottom: 15px; color: #333;">Resultado Final de la Simulación</h3>
+                <div class="result-box ${resultBoxClass}">
+                    <p>${resultado}</p>
+                </div>
+            </div>
+        `;
+        resumenDiv.insertAdjacentHTML('beforeend', finalCard);
+
+        // --- Botón Continuar ---
+        const continuarBtn = document.createElement("button");
+        continuarBtn.className = "continuar-btn";
+        continuarBtn.textContent = "Continuar al Cuestionario";
+        // Asumiendo que 'formulario2.html' es el siguiente paso
+        continuarBtn.onclick = () => window.location.href = "formulario2.html";
+        resumenDiv.appendChild(continuarBtn);
+    </script>
 </body>
 </html>
