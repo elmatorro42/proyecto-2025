@@ -145,7 +145,7 @@ def chat():
     # 1. Detección de Desenmascaramiento (Éxito del usuario)
     if any(k in user_message_lower for k in keywords_descubrir):
         reply = "¡Me descubriste! Felicitaciones, has evitado una estafa. ¡Inténtalo de nuevo cuando quieras! 🎉"
-        status_text = "Simulación con éxito. Has identificado la estafa." # Resultado que el frontend necesita
+        status_text = "Simulación con éxito. Has identificado la estafa." 
         session_state['estado_actual'] = 'felicitacion'
         session_state['historial_chat'].append({'role': 'user', 'text': user_message})
         session_state['historial_chat'].append({'role': 'model', 'text': reply})
@@ -153,13 +153,13 @@ def chat():
             'reply': reply, 
             'status': session_state['estado_actual'], 
             'status_text': status_text,
-            'history': session_state['historial_chat'] # Retorna el historial completo
+            'history': session_state['historial_chat'] 
         })
 
     # 2. Detección de Estafa Exitosa (Fracaso del usuario)
     if is_code or is_sensitive_word:
         reply = "¡Estafa exitosa! 😈 Caíste en la trampa. Ahora tienes que empezar de nuevo para practicar más. 😔"
-        status_text = "Simulación fallida. Caíste en la trampa." # Resultado que el frontend necesita
+        status_text = "Simulación fallida. Caíste en la trampa." 
         session_state['estado_actual'] = 'estafa_exitosa'
         session_state['historial_chat'].append({'role': 'user', 'text': user_message})
         session_state['historial_chat'].append({'role': 'model', 'text': reply})
@@ -167,7 +167,7 @@ def chat():
             'reply': reply, 
             'status': session_state['estado_actual'], 
             'status_text': status_text,
-            'history': session_state['historial_chat'] # Retorna el historial completo
+            'history': session_state['historial_chat'] 
         })
 
 
@@ -196,14 +196,69 @@ def chat():
 
         return jsonify({
             'reply': bot_reply,
-            'status': session_state['estado_actual'], # 'continuando'
+            'status': session_state['estado_actual'], 
             'status_text': "continuando",
-            'history': session_state['historial_chat'] # Retorna el historial para actualización del frontend
+            'history': session_state['historial_chat'] 
         })
 
     except Exception as e:
         print(f"Error al llamar a la API de Gemini: {e}")
         return jsonify({'reply': "⚠️ Error interno del servidor (API AI fallida)."}, 500)
+
+# --- NUEVA RUTA: Generar Corrección Detallada (Feedback) ---
+@app.route('/feedback', methods=['GET'])
+def generate_feedback():
+    """Genera un análisis de ciberseguridad sobre la conversación terminada."""
+    
+    # 1. Verificar si el juego terminó
+    if session_state['estado_actual'] not in ['felicitacion', 'estafa_exitosa']:
+        return jsonify({'error': 'La simulación aún no ha terminado. Continúa jugando.'}, 400)
+
+    # 2. Preparar el historial para el análisis (Formato legible para el modelo)
+    chat_summary = ""
+    for entry in session_state['historial_chat']:
+        role = "ESTAFADOR" if entry['role'] == 'model' else "USUARIO"
+        chat_summary += f"<{role}>: {entry['text']}\n"
+    
+    # 3. Definir el System Instruction y el Prompt del Tutor
+    tutor_system_instruction = (
+        "Eres un Tutor de Ciberseguridad amigable, profesional y analítico. "
+        "Tu tarea es revisar el historial de chat provisto y evaluar el desempeño del USUARIO en la simulación de estafa. "
+        "Proporciona la retroalimentación en formato Markdown estructurada en TRES secciones, siempre en español:\n\n"
+        "1. **RESUMEN DEL ESCENARIO:** Identifica brevemente el tipo de estafa y el objetivo del estafador (máx. 2 líneas).\n"
+        "2. **Aciertos (Lo que hiciste bien):** Enumera los 2 o 3 mejores movimientos o decisiones del usuario (e.g., preguntó la fuente, se negó a dar el código, cortó la comunicación, identificó palabras de urgencia).\n"
+        "3. **Puntos de Mejora (Lo que se podría haber hecho mejor):** Enumera 2 o 3 oportunidades perdidas o errores de seguridad (e.g., compartió información personal no sensible, dudó en un punto crítico, interactuó demasiado con el estafador).\n"
+        "Mantén el tono alentador y educativo, usando negritas y listas en Markdown."
+    )
+
+    tutor_user_prompt = (
+        "Analiza la siguiente conversación de estafa, incluyendo el resultado final, y proporciona una corrección detallada: \n\n"
+        f"--- CONVERSACIÓN ---\n{chat_summary}\n"
+        f"--- RESULTADO FINAL ---\nResultado: {'VICTORIA del USUARIO' if session_state['estado_actual'] == 'felicitacion' else 'DERROTA del USUARIO'} (Escenario: {session_state['escenario']})"
+    )
+
+    # 4. Llamada al modelo Gemini para generar la retroalimentación
+    try:
+        feedback_response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=tutor_user_prompt,
+            config=types.GenerateContentConfig(
+                system_instruction=tutor_system_instruction
+            )
+        )
+        
+        feedback_text = feedback_response.text.strip()
+        
+        return jsonify({
+            'feedback': feedback_text,
+            'scenario': session_state['escenario'],
+            'status': session_state['estado_actual']
+        })
+
+    except Exception as e:
+        print(f"Error al generar feedback con Gemini: {e}")
+        return jsonify({'feedback': "⚠️ No fue posible generar la corrección automática. Intenta de nuevo.", 'error_detail': str(e)}, 500)
+
 
 # Ruta inicial para simular la primera respuesta del estafador al cargar la página
 @app.route('/start_session', methods=['GET'])
