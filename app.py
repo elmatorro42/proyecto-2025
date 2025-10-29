@@ -7,8 +7,7 @@ from google.genai import types
 
 # --- Configuración de la API Key Directa ---
 # IMPORTANTE: Esta clave DEBE ser cargada de forma segura en producción.
-os.environ['GEMINI_API_KEY'] = 'aIzaSyB3I6_EAvu2xEhIijiRWtpzXOr0le_U0HU' 
-
+API_KEY = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
 # Inicializar el cliente Gemini
 try:
     client = genai.Client()
