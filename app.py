@@ -10,7 +10,8 @@ from google.genai import types
 API_KEY = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
 # Inicializar el cliente Gemini
 try:
-    client = genai.Client()
+    client = genai.Client(api_key=API_KEY)
+
 except Exception as e:
     print(f"Error al inicializar el cliente Gemini: {e}")
     print("Asegúrate de que la clave de API sea correcta y esté completa.")
@@ -19,6 +20,24 @@ except Exception as e:
 app = Flask(__name__)
 # Configuración de CORS para permitir peticiones desde el frontend
 CORS(app) 
+
+app = Flask(__name__)
+CORS(app)
+
+# --- Ruta raíz para verificar estado ---
+@app.route("/")
+def home():
+    return jsonify({
+        "message": "✅ Servidor Flask y Gemini activo",
+        "status": "live"
+    })
+
+# (Acá van tus otras rutas, como /chat, /start_session, etc.)
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
+
 
 # Helper function para preparar el historial para la API de Gemini
 def prepare_contents_for_gemini(chat_history):
