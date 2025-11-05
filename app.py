@@ -21,8 +21,7 @@ app = Flask(__name__)
 # Configuración de CORS para permitir peticiones desde el frontend
 CORS(app) 
 
-app = Flask(__name__)
-CORS(app)
+
 
 # --- Ruta raíz para verificar estado ---
 @app.route("/")
@@ -34,9 +33,7 @@ def home():
 
 # (Acá van tus otras rutas, como /chat, /start_session, etc.)
 
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+
 
 
 # Helper function para preparar el historial para la API de Gemini
