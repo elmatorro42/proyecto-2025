@@ -26,11 +26,14 @@ CORS(app)
 # --- Ruta raíz para verificar estado ---
 @app.route("/")
 def home():
+    return render_template("index.html")  # muestra tu página principal
+
+@app.route("/status")
+def status():
     return jsonify({
         "message": "✅ Servidor Flask y Gemini activo",
         "status": "live"
     })
-
 # (Acá van tus otras rutas, como /chat, /start_session, etc.)
 
 
