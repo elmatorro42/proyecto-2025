@@ -287,7 +287,8 @@ def start_session():
         'history': session_state['historial_chat']
     })
 
-if __name__ == '__main__':
-    print("Servidor Anti-Estafas Iniciado. Reiniciando sesión inicial...")
+if __name__ == "__main__":
+    print("🚀 Servidor Anti-Estafas iniciado correctamente.")
     reset_session()
-    app.run(debug=True, port=5000)
+    port = int(os.environ.get("PORT", 5000))  # Render asigna este puerto automáticamente
+    app.run(host="0.0.0.0", port=port)
