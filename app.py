@@ -293,5 +293,10 @@ def start_session():
 if __name__ == "__main__":
     print("🚀 Servidor Anti-Estafas iniciado correctamente.")
     reset_session()
-    port = int(os.environ.get("PORT", 5000))  # Render asigna este puerto automáticamente
-    app.run(host="0.0.0.0", port=port)
+
+    port = int(os.environ.get("PORT", 5000))  # Render usa esta variable
+
+    # Si estás ejecutando localmente, activa debug
+    debug_mode = os.environ.get("RENDER") is None
+
+    app.run(host="0.0.0.0", port=port, debug=debug_mode)
